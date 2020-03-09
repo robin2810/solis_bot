@@ -1,9 +1,16 @@
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
-var getJSON = require('get-json');
+var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
+
+var commands = ["initiateping"],
+initiatePing,
+apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
+guildId = '5e58976f8ea8c9832198e154',
+ms_to_day = 86400000;
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -26,125 +33,111 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message.substring(0, 1) == '&') {
         var args = message.substring(1).split(' ');
         var cmd = args[0];
+        var cmd2 = args[1];
 
         //args = args.splice(1);
         switch(cmd) {
-            // &chiefvote
-            case 'chiefvote':
-              bot.sendMessage({
-                  to: channelID,
-                  message: '<@&684193899253596200>\n' + args.join(" ").substring(10) + '\n\n🙂 = yes, 😐 = neutral, 🙁 = no'
-              }, async function(err, res) {
-                  bot.deleteMessage({
-                    channelID: channelID,
-                    messageID: evt.d.id,
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '🙂'
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '😐'
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '🙁'
-                  });
-              });
-            break;
-
-            // &ur
-            case 'ur':
-              // &ur mom
-              if(args[1] == 'mom') {
+            // &initiateping
+            case 'initiateping':
+              if (cmd2 == 'start') {
+                initiatePing = setInterval(initiate_ping, 5000, channelID);
                 bot.sendMessage({
                     to: channelID,
-                    message: 'gay!'
+                    message: 'Initiate Ping is now started'
                 });
-              }
-            break;
-
-            // &uh
-            case 'uh':
-              // &uh oh
-              if(args[1] == 'oh') {
+              } else if (cmd2 == 'stop') {
+                clearInterval(initiatePing);
                 bot.sendMessage({
                     to: channelID,
-                    message: 'stinky!'
+                    message: 'Initiate Ping is now stopped'
+                });
+              } else {
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'wrong usage, try: &initiateping start or &initiateping stop'
                 });
               }
-            break;
-            // &mock [TEXT] => turns text into mocking spongebob + pic
-            case 'mock':
-              var x = true;
-              var temp = "";
-              for(var i = 0; i < args.length; i++) {
-                args[i] = args[i+1];
-              }
-              for(var i = 0; i < (args.length - 1); i++) {
-                for(var j = 0; j < args[i].length; j++) {
-                  if(x) {
-                    temp = temp + args[i].substring(j, j+1).toUpperCase();
-                    x = false;
-                  } else {
-                    temp = temp + args[i].substring(j, j+1).toLowerCase();
-                    x = true;
-                  }
-                }
-                args[i] = temp;
-                temp = "";
-              }
+              break;
+            default:
               bot.sendMessage({
                   to: channelID,
-                  message: "https://imgur.com/97IRY4A\n**" + args.join(" ") + "**"
+                  message: 'unknown command, try: &' + commands.join(', &')
               });
             break;
-            // &wgl => Wynn Guild List
-            /*case 'wgl':
-            //request gets GuildList from Wynn API
-            getJSON('https://api.wynncraft.com/public_api.php?action=guildList',
-            function(error, response) {
-                //data is the JSON string
-              //All Entries get displayed in the chat
-              var guildString = JSON.stringify(response.guilds);
-              while(guildString.indexOf("\"") !== -1) {
-                guildString = guildString.replace("\"", "");
-              }
-              var i = 1;
-              var guilds = [];
-              var length = 0;
-              do {
-                  index = guildString.indexOf(',', i);
-                  guilds.push(guildString.substring(i, index));
-                  i = index + 1;
-                  length ++;
-              } while (guildString.indexOf(',', i) !== -1 && length <= 100);
-
-              var joined = "";
-              for(var x = 0; x < guilds.length; x++) {
-                  getJSON('https://api.wynncraft.com/public_api.php?action=guildStats&command=' + guilds[x],
-                  function(error2, response2) {
-                      guilds[x] = guilds[x] + " " + JSON.stringify(response2.prefix);
-                  });
-              }
-              guilds = guilds.join("\n");
-              bot.sendMessage({
-                  to: channelID,
-                  message: guilds
-              });
-            });
-            break;*/
          }
      }
 });
 
-function Sleep(milliseconds) {
-   return new Promise(resolve => setTimeout(resolve, milliseconds));
+function initiate_ping(channelID) {
+  var currentDate = Date.now();
+  var urlOuter = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
+  var responseOuter = JSON.parse(getJSON('GET', urlOuter).getBody());
+  var members = responseOuter.guild.members;
+  var responded_username;
+  var out = '',
+  dont_return_out = false;
+  var previousOut;
+  var messageID = fs.readFileSync('messageID.txt', 'utf8');
+
+  if(messageID != "") {
+    dont_return_out = true;
+    bot.getMessage({
+        channelID: channelID,
+        messageID: messageID
+    }, function(err, res) {
+      var message = res.content.split('\n');
+      var names = [];
+      for(i = 0; i < message.length; i = i+2) {
+        var temp = message[i].split(" ");
+        names.push(temp[0]);
+      }
+      for(i = 0; i < members.length; i++) {
+        if(members[i].rank == 'Initiate' && ((currentDate - members[i].joined) > (ms_to_day*7))) {
+          var playerUuid = members[i].uuid;
+          var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
+          var response = JSON.parse(getJSON('GET', url).getBody());
+          responded_username = response.player.displayname;
+          if(dont_return_out) {
+            dont_return_out = names.includes(responded_username);
+          }
+          out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+        }
+      }
+      if(!dont_return_out) {
+        bot.sendMessage({
+            to: channelID,
+            message: out
+        }, function(err, res) {
+          if(err == "") {
+            console.log(err);
+          } else {
+            fs.writeFileSync('messageID.txt', res.id);
+          }
+        });
+      }
+    });
+  } else {
+    for(i = 0; i < members.length; i++) {
+      if(members[i].rank == 'Initiate' && ((currentDate - members[i].joined) > (ms_to_day*7))) {
+        var playerUuid = members[i].uuid;
+        var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
+        var response = JSON.parse(getJSON('GET', url).getBody());
+        responded_username = response.player.displayname;
+        out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+      }
+    }
+
+    if(!dont_return_out) {
+      bot.sendMessage({
+          to: channelID,
+          message: out
+      }, function(err, res) {
+        if(err == "") {
+          console.log(err);
+        } else {
+          fs.writeFileSync('messageID.txt', res.id);
+        }
+      });
+    }
+  }
 }
