@@ -1,0 +1,13 @@
+{
+  "name": "gay-bot",
+  "version": "1.0.0",
+  "description": "My Gay Discord Bot",
+  "main": "bot.js",
+  "author": "Boebim",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "fs": "0.0.1-security",
+    "get-json": "^1.0.1",
+    "winston": "^3.2.1"
+  }
+}
