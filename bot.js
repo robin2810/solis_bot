@@ -74,7 +74,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             if(serverID == '627293915501953024') {
               bot.sendMessage({
                   to: channelID,
-                  message: '<@&684193899253596200>\n' + args.join(" ").substring(10)
+                  message: '<@&627583725302972427>\n' + args.join(" ").substring(10)
               }, async function(err, res) {
                   bot.deleteMessage({
                     channelID: channelID,
