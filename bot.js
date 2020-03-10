@@ -45,7 +45,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             case 'initiateping':
               if(serverID == '685284276362543115') {
                 if (cmd2 == 'start') {
-                  initiatePing = setInterval(initiate_ping, 5000, channelID);
+                  initiatePing = setInterval(initiate_ping, 60000, channelID);
                   bot.sendMessage({
                       to: channelID,
                       message: 'Initiate Ping is now started'
