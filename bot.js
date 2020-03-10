@@ -57,7 +57,40 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     message: 'wrong usage, try: &initiateping start or &initiateping stop'
                 });
               }
-              break;
+            break;
+
+            // &chiefvote
+            case 'chiefvote':
+              bot.sendMessage({
+                  to: channelID,
+                  message: '<@&684193899253596200>\n' + args.join(" ").substring(10)
+              }, async function(err, res) {
+                  bot.deleteMessage({
+                    channelID: channelID,
+                    messageID: evt.d.id,
+                  });
+                  await Sleep(2500);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '🙂'
+                  });
+                  await Sleep(2500);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '😐'
+                  });
+                  await Sleep(2500);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '🙁'
+                  });
+              });
+            break;
+
+            //default
             default:
               bot.sendMessage({
                   to: channelID,
