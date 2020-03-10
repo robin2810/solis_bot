@@ -11,8 +11,6 @@ apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
 ms_to_day = 86400000;
 
-var connectedToServer;
-
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -31,7 +29,7 @@ bot.on('ready', function (evt) {
 });
 bot.on('message', function (user, userID, channelID, message, evt) {
 
-  console.log(evt);
+    var serverID = evt.d.guild_id;
 
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
@@ -42,30 +40,38 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
-            // &initiateping
+            // &initiateping [685284276362543115]
             case 'initiateping':
-              if (cmd2 == 'start') {
-                initiatePing = setInterval(initiate_ping, 5000, channelID);
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Initiate Ping is now started'
-                });
-              } else if (cmd2 == 'stop') {
-                clearInterval(initiatePing);
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Initiate Ping is now stopped'
-                });
+              if(serverID == '685284276362543115') {
+                if (cmd2 == 'start') {
+                  initiatePing = setInterval(initiate_ping, 5000, channelID);
+                  bot.sendMessage({
+                      to: channelID,
+                      message: 'Initiate Ping is now started'
+                  });
+                } else if (cmd2 == 'stop') {
+                  clearInterval(initiatePing);
+                  bot.sendMessage({
+                      to: channelID,
+                      message: 'Initiate Ping is now stopped'
+                  });
+                } else {
+                  bot.sendMessage({
+                      to: channelID,
+                      message: 'wrong usage, try: &initiateping start or &initiateping stop'
+                  });
+                }
               } else {
                 bot.sendMessage({
                     to: channelID,
-                    message: 'wrong usage, try: &initiateping start or &initiateping stop'
+                    message: 'this command is not meant for this server!';
                 });
               }
             break;
 
-            // &chiefvote
+            // &chiefvote [627293915501953024]
             case 'chiefvote':
+            if(serverID == '627293915501953024') {
               bot.sendMessage({
                   to: channelID,
                   message: '<@&684193899253596200>\n' + args.join(" ").substring(10)
@@ -93,6 +99,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     reaction: '🙁'
                   });
               });
+            } else {
+              bot.sendMessage({
+                  to: channelID,
+                  message: 'this command is not meant for this server!';
+              });
+            }
             break;
 
             //default
