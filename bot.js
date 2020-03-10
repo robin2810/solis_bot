@@ -11,6 +11,8 @@ apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
 ms_to_day = 86400000;
 
+var connectedToServer;
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -28,6 +30,9 @@ bot.on('ready', function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 bot.on('message', function (user, userID, channelID, message, evt) {
+
+  console.log(evt);
+
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (message.substring(0, 1) == '&') {
