@@ -6,7 +6,7 @@ var fs = require('fs');
 require('.');
 
 var commandsHypixel = ["initiateping"],
-var commandsWynn = ["chiefvote"],
+commandsWynn = ["chiefvote"],
 initiatePing,
 apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
