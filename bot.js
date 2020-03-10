@@ -5,7 +5,8 @@ var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
 
-var commands = ["initiateping"],
+var commandsHypixel = ["initiateping"],
+var commandsWynn = ["chiefvote"],
 initiatePing,
 apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
@@ -107,12 +108,34 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
             break;
 
+            // &help
+            case 'help':
+              if(serverID == '627293915501953024') { //WYNN
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'you can use the following commands: &' + commandsWynn.join(', &')
+                });
+              } else if(serverID == '685284276362543115') { //HYPIXEL
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'you can use the following commands: &' + commandsHypixel.join(', &')
+                });
+              }
+            break;
+
             //default
             default:
-              bot.sendMessage({
-                  to: channelID,
-                  message: 'unknown command, try: &' + commands.join(', &')
-              });
+              if(serverID == '627293915501953024') { //WYNN
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'unknown command, try: &' + commandsWynn.join(', &')
+                });
+              } else if(serverID == '685284276362543115') { //HYPIXEL
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'unknown command, try: &' + commandsHypixel.join(', &')
+                });
+              }
             break;
          }
      }
