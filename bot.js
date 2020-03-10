@@ -64,7 +64,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
               } else {
                 bot.sendMessage({
                     to: channelID,
-                    message: 'this command is not meant for this server!';
+                    message: 'this command is not meant for this server!'
                 });
               }
             break;
@@ -102,7 +102,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             } else {
               bot.sendMessage({
                   to: channelID,
-                  message: 'this command is not meant for this server!';
+                  message: 'this command is not meant for this server!'
               });
             }
             break;
