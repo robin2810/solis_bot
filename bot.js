@@ -28,6 +28,18 @@ bot.on('ready', function (evt) {
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
+bot.on('guildMemberAdd', function(member) {
+  bot.addToRole({
+    serverID: member.guild_id,
+    userID: member.id,
+    roleID: '685302841224855572' //Normies
+  });
+  bot.addToRole({
+    serverID: member.guild_id,
+    userID: member.id,
+    roleID: '685303000381915175' //Guest
+  })
+});
 bot.on('message', function (user, userID, channelID, message, evt) {
 
     var serverID = evt.d.guild_id;
@@ -213,4 +225,8 @@ function initiate_ping(channelID) {
       });
     }
   }
+}
+
+function Sleep(milliseconds) {
+   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
