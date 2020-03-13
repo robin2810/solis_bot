@@ -5,8 +5,8 @@ var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
 
-var commandsHypixel = ["initiateping, ping"],
-commandsWynn = ["chiefvote, ping"],
+var commandsHypixel = ["initiateping", "ping"],
+commandsWynn = ["chiefvote", "ping"],
 initiatePing,
 apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
@@ -137,7 +137,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
               }
             break;
 
-            case '&ping':
+            case 'ping':
               bot.sendMessage({
                 to: channelID,
                 message: 'pong'
