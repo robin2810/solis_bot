@@ -5,8 +5,8 @@ var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
 
-var commandsHypixel = ["initiateping"],
-commandsWynn = ["chiefvote"],
+var commandsHypixel = ["initiateping, ping"],
+commandsWynn = ["chiefvote, ping"],
 initiatePing,
 apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
@@ -29,16 +29,18 @@ bot.on('ready', function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 bot.on('guildMemberAdd', function(member) {
-  bot.addToRole({
-    serverID: member.guild_id,
-    userID: member.id,
-    roleID: '685302841224855572' //Normies
-  });
-  bot.addToRole({
-    serverID: member.guild_id,
-    userID: member.id,
-    roleID: '685303000381915175' //Guest
-  })
+  if(serverID == '685284276362543115') {
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685302841224855572' //Normies
+    });
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685303000381915175' //Guest
+    });
+  }
 });
 bot.on('message', function (user, userID, channelID, message, evt) {
 
@@ -133,6 +135,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     message: 'you can use the following commands: &' + commandsHypixel.join(', &')
                 });
               }
+            break;
+
+            case '&ping':
+              bot.sendMessage({
+                to.channelID,
+                message: 'pong'
+              })
             break;
 
             //default
