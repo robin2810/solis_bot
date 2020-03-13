@@ -41,9 +41,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
-          if(serverID == '685284276362543115') { //Hypixel
-            // &initiateping
+            // &initiateping [685284276362543115]
             case 'initiateping':
+              if(serverID == '685284276362543115') {
                 if (cmd2 == 'start') {
                   initiatePing = setInterval(initiate_ping, 60000, channelID);
                   bot.sendMessage({
@@ -62,10 +62,17 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                       message: 'wrong usage, try: &initiateping start or &initiateping stop'
                   });
                 }
+              } else {
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'this command is not meant for this server!'
+                });
+              }
             break;
-          } else if(serverID == '627293915501953024') {
+
             // &chiefvote [627293915501953024]
             case 'chiefvote':
+            if(serverID == '627293915501953024') {
               bot.sendMessage({
                   to: channelID,
                   message: '<@&627583725302972427>\n' + args.join(" ").substring(10)
@@ -92,6 +99,11 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     messageID: res.id,
                     reaction: '🙁'
                   });
+              });
+            } else {
+              bot.sendMessage({
+                  to: channelID,
+                  message: 'this command is not meant for this server!'
               });
             }
             break;
@@ -125,9 +137,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 });
               }
             break;
-          }
-        }
-     });
+         }
+     }
+});
 
 function initiate_ping(channelID) {
   var currentDate = Date.now();
