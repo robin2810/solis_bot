@@ -188,7 +188,7 @@ function initiate_ping(channelID) {
           names.push(temp[0]);
         }
         for(i = 0; i < members.length; i++) {
-          if(members[i].rank == 'Initiate' && ((currentDate - members[i].joined) > (ms_to_day*7))) {
+          if(members[i].rank == 'Initiate') {
             var playerUuid = members[i].uuid;
             var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
             var response = JSON.parse(getJSON('GET', url).getBody());
@@ -196,12 +196,16 @@ function initiate_ping(channelID) {
             if(dont_return_out) {
               dont_return_out = names.includes(responded_username);
             }
-            out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-          } else if(members[i].rank =='Initiate'){
-            out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+            if((currentDate - members[i].joined) > (ms_to_day*7)) {
+              out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+              out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+            } else {
+              out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+            }
           }
         }
-        if(1 == 1) {//Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
+        if(Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
+          console.log(Date(Date.now().toString());
           console.log(out2);
         }
         if(!dont_return_out) {
