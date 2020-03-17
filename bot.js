@@ -205,7 +205,7 @@ function initiate_ping(channelID) {
           }
         }
         if(Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
-          console.log(Date(Date.now().toString());
+          console.log(Date(Date.now().toString()));
           console.log(out2);
         }
         if(!dont_return_out) {
