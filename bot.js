@@ -12,10 +12,6 @@ apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
 guildId = '5e58976f8ea8c9832198e154',
 ms_to_day = 86400000;
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', reason.stack || reason)
-})
-
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -196,6 +192,7 @@ function initiate_ping(channelID) {
             var playerUuid = members[i].uuid;
             var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
             var response = JSON.parse(getJSON('GET', url).getBody());
+            console.log(Date(Date.now().toString()) + ' - working fine');
             responded_username = response.player.displayname;
             if((currentDate - members[i].joined) > (ms_to_day*7)) {
               if(dont_return_out) {
@@ -227,15 +224,24 @@ function initiate_ping(channelID) {
       });
     } else {
       for(i = 0; i < members.length; i++) {
-        if(members[i].rank == 'Initiate' && ((currentDate - members[i].joined) > (ms_to_day*7))) {
+        if(members[i].rank == 'Initiate') {
           var playerUuid = members[i].uuid;
           var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
           var response = JSON.parse(getJSON('GET', url).getBody());
+          console.log(Date(Date.now().toString()) + ' - working fine');
           responded_username = response.player.displayname;
-          out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+          if((currentDate - members[i].joined) > (ms_to_day*7)) {
+            out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+            out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+          } else {
+            out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
+          }
         }
       }
-
+      if(Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
+        console.log(Date(Date.now().toString()));
+        console.log(out2);
+      }
       if(!dont_return_out) {
         bot.sendMessage({
           to: channelID,
