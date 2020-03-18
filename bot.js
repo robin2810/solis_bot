@@ -193,10 +193,10 @@ function initiate_ping(channelID) {
             var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
             var response = JSON.parse(getJSON('GET', url).getBody());
             responded_username = response.player.displayname;
-            if(dont_return_out) {
-              dont_return_out = names.includes(responded_username);
-            }
             if((currentDate - members[i].joined) > (ms_to_day*7)) {
+              if(dont_return_out) {
+                dont_return_out = names.includes(responded_username);
+              }
               out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
               out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
             } else {
