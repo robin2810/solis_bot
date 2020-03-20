@@ -196,7 +196,9 @@ function initiate_ping(channelID) {
             var playerUuid = members[i].uuid;
             var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
             var response = JSON.parse(getJSON('GET', url).getBody());
-            console.log(Date(Date.now().toString()) + ' - working fine');
+            if(Math.round(Date.now()/1000) % 600 == 0) {
+              console.log(Date(Date.now().toString()) + ' - working fine');
+            }
             responded_username = response.player.displayname;
             if((currentDate - members[i].joined) > (ms_to_day*7)) {
               if(dont_return_out) {
@@ -209,7 +211,7 @@ function initiate_ping(channelID) {
             }
           }
         }
-        if(Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
+        if(Math.round(Date.now()/1000) % Math.round(ms_to_day/1000) == 0) {
           console.log(Date(Date.now().toString()));
           console.log(out2);
         }
@@ -232,7 +234,9 @@ function initiate_ping(channelID) {
           var playerUuid = members[i].uuid;
           var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
           var response = JSON.parse(getJSON('GET', url).getBody());
-          console.log(Date(Date.now().toString()) + ' - working fine');
+          if(Math.round(Date.now()/1000) % 600 == 0) {
+            console.log(Date(Date.now().toString()) + ' - working fine');
+          }
           responded_username = response.player.displayname;
           if((currentDate - members[i].joined) > (ms_to_day*7)) {
             out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
@@ -242,7 +246,7 @@ function initiate_ping(channelID) {
           }
         }
       }
-      if(Date.now().toFixed(5) % ms_to_day.toFixed(5) == 0) {
+      if(Math.round(Date.now()/1000) % Math.round(ms_to_day/1000) == 0) {
         console.log(Date(Date.now().toString()));
         console.log(out2);
       }
