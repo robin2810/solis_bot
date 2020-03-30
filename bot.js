@@ -8,13 +8,13 @@ require('.');
 var commandsHypixel = ["initiateping", "ping"],
 commandsWynn = ["chiefvote", "ping"],
 initiatePing,
-apiKey = 'd22f01f1-da75-4bfc-8ede-9fcd9dec2129',
+apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
 guildId = '5e58976f8ea8c9832198e154',
 ms_to_day = 86400000;
 
 process.on('unhandledRejection', (reason, promise) => {
   console.log('Unhandled Rejection at:', reason.stack || reason)
-})
+});
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -196,9 +196,6 @@ function initiate_ping(channelID) {
             var playerUuid = members[i].uuid;
             var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
             var response = JSON.parse(getJSON('GET', url).getBody());
-            if(Math.round(Date.now()/1000) % 600 == 0) {
-              console.log(Date(Date.now().toString()) + ' - working fine');
-            }
             responded_username = response.player.displayname;
             if((currentDate - members[i].joined) > (ms_to_day*7)) {
               if(dont_return_out) {
@@ -234,9 +231,6 @@ function initiate_ping(channelID) {
           var playerUuid = members[i].uuid;
           var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
           var response = JSON.parse(getJSON('GET', url).getBody());
-          if(Math.round(Date.now()/1000) % 600 == 0) {
-            console.log(Date(Date.now().toString()) + ' - working fine');
-          }
           responded_username = response.player.displayname;
           if((currentDate - members[i].joined) > (ms_to_day*7)) {
             out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
