@@ -5,7 +5,7 @@ var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
 
-var commandsHypixel = ["initiateping", "ping"],
+var commandsHypixel = ["initiateping", "verify", "ping"],
 commandsWynn = ["chiefvote", "ping"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
@@ -59,7 +59,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
-            // &initiateping [685284276362543115]
+            // &initiateping <start|stop> [685284276362543115]
             case 'initiateping':
               if(serverID == '685284276362543115') {
                 if (cmd2 == 'start') {
@@ -88,7 +88,77 @@ bot.on('message', function (user, userID, channelID, message, evt) {
               }
             break;
 
-            // &chiefvote [627293915501953024]
+            // &verify <discordtag> [685284276362543115]
+            case 'verify':
+              if(serverID == '685284276362543115') {
+                if(cmd2 == null) {
+                  bot.sendMessage({
+                      to: channelID,
+                      message: 'wrong usage, try: &verify <discordtag#number>'
+                  });
+                } else {
+                  var discordtag = cmd2.split("#");
+                  cmd2 = discordtag[0] + "#" + discordtag[1];
+                  var usersArray = Object.values(bot.users);
+                  if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]) != undefined) {
+                    if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).bot == true) {
+                      bot.sendMessage({
+                        to: channelID,
+                        message: cmd2 + " is a bot!"
+                      });
+                    } else {
+                      var userIdFromDisctag = usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).id;
+                      bot.addToRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685302948095328268' //friend
+                      });
+                      bot.addToRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685290524747235338' //members
+                      });
+                      bot.addToRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685290389413822540' //initiate
+                      });
+                      bot.addToRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685303138986885203' //ranks
+                      });
+                      bot.addToRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685303870896734208' //bronze
+                      });
+                      bot.removeFromRole({
+                        serverID: '685284276362543115',
+                        userID: userIdFromDisctag,
+                        roleID: '685303000381915175' //guest
+                      });
+                      bot.sendMessage({
+                        to: channelID,
+                        message: cmd2 + " verified!"
+                      });
+                    }
+                  } else {
+                    bot.sendMessage({
+                      to: channelID,
+                      message: "User " + cmd2 + " not found!"
+                    });
+                  }
+                }
+              } else {
+                bot.sendMessage({
+                    to: channelID,
+                    message: 'this command is not meant for this server!'
+                });
+              }
+            break;
+
+            // &chiefvote <votemessage> [627293915501953024]
             case 'chiefvote':
             if(serverID == '627293915501953024') {
               bot.sendMessage({
