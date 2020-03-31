@@ -46,7 +46,7 @@ bot.on('guildMemberAdd', function(member) {
     });
   }
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
+bot.on('message', async function (user, userID, channelID, message, evt) {
 
     var serverID = evt.d.guild_id;
 
@@ -113,31 +113,37 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         userID: userIdFromDisctag,
                         roleID: '685302948095328268' //friend
                       });
+                      await Sleep(1000);
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
                         roleID: '685290524747235338' //members
                       });
+                      await Sleep(1000);
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
                         roleID: '685290389413822540' //initiate
                       });
+                      await Sleep(1000);
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
                         roleID: '685303138986885203' //ranks
                       });
+                      await Sleep(1000);
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
                         roleID: '685303870896734208' //bronze
                       });
+                      await Sleep(1000);
                       bot.removeFromRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
                         roleID: '685303000381915175' //guest
                       });
+                      await Sleep(1000);
                       bot.sendMessage({
                         to: channelID,
                         message: cmd2 + " verified!"
