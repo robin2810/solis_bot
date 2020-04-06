@@ -34,16 +34,30 @@ bot.on('ready', function (evt) {
 });
 bot.on('guildMemberAdd', function(member) {
   if(member.guild_id == '685284276362543115') {
-    bot.addToRole({
-      serverID: member.guild_id,
-      userID: member.id,
-      roleID: '685302841224855572' //Normies
-    });
-    bot.addToRole({
-      serverID: member.guild_id,
-      userID: member.id,
-      roleID: '685303000381915175' //Guest
-    });
+    var usersArray = Object.values(bot.users);
+    if(usersArray.find(usersArray => usersArray.id === member.id).bot == true) {
+      bot.addToRole({
+        serverID: member.guild_id,
+        userID: member.id,
+        roleID: '685302841224855572' //Normies
+      });
+      bot.addToRole({
+        serverID: member.guild_id,
+        userID: member.id,
+        roleID: '685303000381915175' //Guest
+      });
+    } else {
+      bot.addToRole({
+        serverID: member.guild_id,
+        userID: member.id,
+        roleID: '685635246628012043' //Bot
+      });
+      bot.addToRole({
+        serverID: member.guild_id,
+        userID: member.id,
+        roleID: '685637329725030400' //Robo Normies
+      });
+    }
   }
 });
 bot.on('message', async function (user, userID, channelID, message, evt) {
