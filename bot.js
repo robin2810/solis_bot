@@ -5,6 +5,8 @@ var getJSON = require('sync-request');
 var fs = require('fs');
 require('.');
 
+var homeDir = '/home/pi/.discord/lxt_bot/';
+
 var commandsHypixel = ["initiateping", "verify", "ping"],
 commandsWynn = ["chiefvote", "ping"],
 initiatePing,
@@ -267,7 +269,7 @@ function initiate_ping(channelID) {
     out2 = '',
     dont_return_out = false;
     var previousOut;
-    var messageID = fs.readFileSync('messageID.txt', 'utf8');
+    var messageID = fs.readFileSync(homeDir + 'messageID.txt', 'utf8');
 
     if(messageID != "") {
       dont_return_out = true;
@@ -342,7 +344,7 @@ function initiate_ping(channelID) {
           if(err == "") {
             console.log(err);
           } else {
-            fs.writeFileSync('messageID.txt', res.id);
+            fs.writeFileSync(homeDir + 'messageID.txt', res.id);
           }
         });
       }
