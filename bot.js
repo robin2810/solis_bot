@@ -107,6 +107,10 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
             // &verify <discordtag> [685284276362543115]
             case 'verify':
               if(serverID == '685284276362543115') {
+                temp = args;
+                temp.shift();
+                cmd2 = temp.join(' ');
+                console.log(cmd2);
                 if(cmd2 == null) {
                   bot.sendMessage({
                       to: channelID,
