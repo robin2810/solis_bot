@@ -37,7 +37,7 @@ bot.on('ready', function (evt) {
 bot.on('guildMemberAdd', function(member) {
   if(member.guild_id == '685284276362543115') {
     var usersArray = Object.values(bot.users);
-    if(usersArray.find(usersArray => usersArray.id === member.id).bot == true) {
+    if(usersArray.find(usersArray => usersArray.id === member.id).bot == false) {
       bot.addToRole({
         serverID: member.guild_id,
         userID: member.id,
