@@ -78,12 +78,19 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
             // &memberlist
             case 'memberlist':
-              usersList = bot.users;
+              var usersList = bot.users;
+              var usersArray = Object.values(bot.users);
+              var membersList = Object.values(bot.servers[serverID].members);
               var out = "";
               for (key in usersList) {
                 if(usersList[key].bot == false) {
-                  out = out.concat(usersList[key].username, "\n");
-                  console.log(out);
+                  var nickname = membersList.find(membersList => membersList.id === key).nick;
+                  console.log(nickname);
+                  if(nickname != undefined) {
+                    out = out.concat(nickname, "\n");
+                  } else {
+                    out = out.concat(usersList[key].username, "\n");
+                  }
                 }
               }
               bot.sendMessage({
