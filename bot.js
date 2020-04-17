@@ -75,6 +75,23 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
+
+            // &memberlist
+            case 'memberlist':
+              usersList = bot.users;
+              var out = "";
+              for (key in usersList) {
+                if(usersList[key].bot == false) {
+                  out = out.concat(usersList[key].username, "\n");
+                  console.log(out);
+                }
+              }
+              bot.sendMessage({
+                to: channelID,
+                message: "==========\n" + out + "==========\nDon't mind me, I'm just here for Boeboe's testing purposes"
+              });
+            break;
+
             // &initiateping <start|stop> [685284276362543115]
             case 'initiateping':
               if(serverID == '685284276362543115') {
