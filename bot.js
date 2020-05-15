@@ -12,7 +12,8 @@ commandsWynn = ["chiefvote", "ping"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
 guildId = '5e58976f8ea8c9832198e154',
-ms_to_day = 86400000;
+ms_to_day = 86400000,
+xhat_uid = '238700956873654272';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.log('Unhandled Rejection at:', reason.stack || reason)
@@ -60,6 +61,71 @@ bot.on('guildMemberAdd', function(member) {
         roleID: '685637329725030400' //Robo Normies
       });
     }
+  }
+});
+bot.on('voiceStateUpdate', function(event) {
+  var xhat_vc_id = bot.servers[event.d.guild_id].members[xhat_uid].voice_channel_id;
+  //console.log(bot.servers[event.d.guild_id].members);
+  if(xhat_vc_id != undefined) {
+    var usersArray = Object.values(bot.users);
+    var membersList = Object.values(bot.servers[event.d.guild_id].members);
+    fs.readFile('nicks.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+        console.log(err);
+      } else {
+        obj = JSON.parse(data); //now it an object
+        var toDel = [];
+        for (key in membersList) {
+          if(membersList[key].voice_channel_id == xhat_vc_id) {
+            if(membersList[key].id != xhat_uid) {
+              var found = false;
+              for(var i=0; i<obj.nicks.length; i++) {
+                if(obj.nicks[i]['id'].indexOf(membersList[key].id)!=-1) {
+                  found = true;
+                }
+              }
+              if(found == false) {
+                if(membersList[key].nick == undefined) {
+                  obj.nicks.push({"id": membersList[key].id, "nick": null}); //add some data
+                } else {
+                  obj.nicks.push({"id": membersList[key].id, "nick": membersList[key].nick}); //add some data
+                }
+                bot.editNickname({
+                  serverID: event.d.guild_id,
+                  userID: membersList[key].id,
+                  nick: "Xhat"
+                });
+              }
+            }
+          } else if(membersList[key].nick == "Xhat"){
+            for(var i=0; i<obj.nicks.length; i++) {
+              if(obj.nicks[i]['id'].indexOf(membersList[key].id)!=-1) {
+                bot.editNickname({
+                  serverID: event.d.guild_id,
+                  userID: obj.nicks[i].id,
+                  nick: obj.nicks[i].nick
+                });
+                toDel.push(i);
+              }
+            }
+          }
+        }
+        for(var i=0; i<toDel.length; i++) {
+          obj.nicks.splice(toDel[i], 1);
+        }
+      json = JSON.stringify(obj, null, 2); //convert it back to json
+      if(JSON.stringify(obj.nicks[0]) != undefined) {
+        fs.writeFile('nicks.json', json, 'utf8', (err) => {
+          if (err) throw err;
+          console.log('The file has been saved!');
+        });
+      } else {
+        fs.writeFile('nicks.json', JSON.stringify({"nicks" : []}, null, 2), 'utf8', (err) => {
+          if (err) throw err;
+          console.log('The file has been saved empty!');
+        });
+      }
+    }});
   }
 });
 bot.on('message', async function (user, userID, channelID, message, evt) {
