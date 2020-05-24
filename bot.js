@@ -156,7 +156,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                       message: "no API access for profile " + inv[i].name
                     });
                   } else {
-                    var filename = 'inv_'+inv[i].name+'.txt';
+                    var filename = __dirname + '/inv_'+inv[i].name+'.txt';
                     fs.writeFile(filename, inv[i].inv, 'utf8', (err) => {
                       if (err) throw err;
                       bot.uploadFile( {
