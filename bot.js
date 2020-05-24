@@ -3,6 +3,7 @@ var logger = require('winston');
 var auth = require('./auth.json');
 var getJSON = require('sync-request');
 var fs = require('fs');
+var nbt = require('nbt');
 require('.');
 
 var homeDir = '/home/pi/.discord/lxt_bot/';
@@ -141,6 +142,38 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
+
+            // &inventories <Username>
+            case 'inventories':
+              if(args.length > 2) {
+                console.log("false");
+              } else {
+                var inv = getInventory(args[1]);
+                for (var i=0; i<inv.length; i++) {
+                  if(inv[i].inv == "no_data") {
+                    bot.sendMessage({
+                      to: channelID,
+                      message: "no API access for profile " + inv[i].name
+                    });
+                  } else {
+                    var filename = 'inv_'+inv[i].name+'.txt';
+                    fs.writeFile(filename, inv[i].inv, 'utf8', (err) => {
+                      if (err) throw err;
+                      bot.uploadFile( {
+                        to: channelID,
+                        file: filename,
+                        filename: null,
+                        message: "here, have this base64 decoded, but still gzipped mess. im too lazy do keep on going"
+                      }, function (err, res) {
+                        fs.unlink(filename, function (err) {
+                          if (err) throw err;
+                        });
+                      });
+                    });
+                  }
+                }
+              }
+            break;
 
             // &memberlist
             case 'memberlist':
@@ -352,6 +385,34 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
      }
 });
 
+function getInventory(uName) {
+  var requestPlayerUuid = "https://api.hypixel.net/player?key=" + apiKey + "&name=" + uName;
+  var responsePlayerUuid = JSON.parse(getJSON('GET', requestPlayerUuid).getBody());
+  var playerUuid = responsePlayerUuid.player.uuid;
+
+  var profiles = [];
+  var reqeustUuidProfiles = "https://api.hypixel.net/skyblock/profiles?key=" + apiKey + "&uuid=" + playerUuid;
+  var responseUuidProfiles = JSON.parse(getJSON('GET', reqeustUuidProfiles).getBody());
+  for (var i=0; i<responseUuidProfiles.profiles.length; i++) {
+    profiles.push({id: responseUuidProfiles.profiles[i].profile_id, name: responseUuidProfiles.profiles[i].cute_name});
+  }
+
+  var inventories = [];
+  for (var i=0; i<profiles.length; i++) {
+    var requestProfile = "https://api.hypixel.net/skyblock/profile?key=" + apiKey + "&profile=" + profiles[i].id;
+    var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
+    var inv_contents = responseProfile.profile.members[playerUuid].inv_contents;
+    if(inv_contents == undefined) {
+      inventories.push({id: profiles[i].id, name: profiles[i].name, inv: "no_data"});
+    } else {
+      inventories.push({id: profiles[i].id, name: profiles[i].name, inv: decodeBase64(inv_contents.data)});
+    }
+  }
+
+  return inventories;
+
+}
+
 function initiate_ping(channelID) {
   var currentDate = Date.now();
   var urlOuter = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
@@ -451,3 +512,14 @@ function initiate_ping(channelID) {
 function Sleep(milliseconds) {
    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
+
+function decodeBase64(s) {
+    var e={},i,b=0,c,x,l=0,a,r='',w=String.fromCharCode,L=s.length;
+    var A="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    for(i=0;i<64;i++){e[A.charAt(i)]=i;}
+    for(x=0;x<L;x++){
+        c=e[s.charAt(x)];b=(b<<6)+c;l+=6;
+        while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
+    }
+    return r;
+};
