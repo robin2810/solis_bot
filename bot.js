@@ -266,7 +266,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
-                        roleID: '685290389413822540' //initiate
+                        roleID: '685290264843386969' //member
                       });
                       await Sleep(1000);
                       bot.addToRole({
