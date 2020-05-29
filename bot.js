@@ -8,8 +8,8 @@ require('.');
 
 var homeDir = '/home/pi/.discord/lxt_bot/';
 
-var commandsHypixel = ["initiateping", "verify", "ping"],
-commandsWynn = ["chiefvote", "ping"],
+var commandsHypixel = ["initiateping", "verify", "ping", "memberlist", "inventories", "trustedvote"],
+commandsWynn = ["chiefvote", "ping", "memberlist"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
 guildId = '5e58976f8ea8c9832198e154',
@@ -143,7 +143,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
         //args = args.splice(1);
         switch(cmd) {
 
-            // &inventories <Username>
+            // &inventories <Username> [685284276362543115]
             case 'inventories':
               if(args.length > 2) {
                 console.log("false");
@@ -305,6 +305,63 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                     message: 'this command is not meant for this server!'
                 });
               }
+            break;
+
+            // &trustedvote <name> [685284276362543115]
+            case 'trustedvote':
+            //if(serverID == '685284276362543115') {
+            if(serverID == '689563662008057858') {
+              if(args[2] == '@') {
+                bot.sendMessage({
+                  to: channelID,
+                  message: '@everyone\nsetup an interview with ' + args[1] + ' for Trusted?'
+                }, async function(err, res) {
+                  bot.deleteMessage({
+                    channelID: channelID,
+                    messageID: evt.d.id,
+                  });
+                  await Sleep(2500);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '<:white_check_mark:715890623177031700>'
+                  });
+                  await Sleep(2500);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '<:negative_squared_cross_mark:715891222857646141>'
+                  });
+                });
+              } else {
+                bot.sendMessage({
+                  to: channelID,
+                  message: 'setup an interview with ' + args[1] + ' for Trusted?'
+                }, async function(err, res) {
+                  bot.deleteMessage({
+                    channelID: channelID,
+                    messageID: evt.d.id,
+                  });
+                  await Sleep(1000);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '🙂'
+                  });
+                  await Sleep(1000);
+                  bot.addReaction({
+                    channelID: channelID,
+                    messageID: res.id,
+                    reaction: '🙁'
+                  });
+                });
+              }
+            } else {
+              bot.sendMessage({
+                  to: channelID,
+                  message: 'this command is not meant for this server!'
+              });
+            }
             break;
 
             // &chiefvote <votemessage> [627293915501953024]
