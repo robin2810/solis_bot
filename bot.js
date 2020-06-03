@@ -4,11 +4,12 @@ var auth = require('./auth.json');
 var getJSON = require('sync-request');
 var fs = require('fs');
 var nbt = require('nbt');
+var scheduler = require('node-schedule');
 require('.');
 
 var homeDir = '/home/pi/.discord/lxt_bot/';
 
-var commandsHypixel = ["initiateping", "verify", "ping", "memberlist", "inventories", "trustedvote"],
+var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "trustedvote <name> <interview|promotion> [@]"],
 commandsWynn = ["chiefvote", "ping", "memberlist"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
@@ -311,51 +312,47 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
             case 'trustedvote':
             //if(serverID == '685284276362543115') {
             if(serverID == '689563662008057858') {
-              if(args[2] == '@') {
-                bot.sendMessage({
-                  to: channelID,
-                  message: '@everyone\nsetup an interview with ' + args[1] + ' for Trusted?'
-                }, async function(err, res) {
-                  bot.deleteMessage({
-                    channelID: channelID,
-                    messageID: evt.d.id,
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '<:white_check_mark:715890623177031700>'
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '<:negative_squared_cross_mark:715891222857646141>'
-                  });
-                });
+              var msg = "";
+              var rightUsage = true;
+
+              if(args[3] == '@') {
+                msg = '@everyone\n';
+              } else if(args[3] != null){
+                msg = 'wrong usage: use &trustedvote <name> <interview|promotion> [@]';
+                rightUsage = false;
+              }
+
+              if(args[2] == 'interview') {
+                msg = msg + 'setup an interview with ' + args[1] + ' for Trusted?'
+              } else if(args[2] == 'promotion') {
+                msg = msg + 'promote ' + args[1] + ' to Trusted?';
               } else {
-                bot.sendMessage({
-                  to: channelID,
-                  message: 'setup an interview with ' + args[1] + ' for Trusted?'
-                }, async function(err, res) {
+                msg = 'wrong usage: use &trustedvote <name> <interview|promotion> [@]';
+                rightUsage = false;
+              }
+              bot.sendMessage({
+                to: channelID,
+                message: msg
+              }, async function(err, res) {
+                if(rightUsage == true) {
                   bot.deleteMessage({
                     channelID: channelID,
                     messageID: evt.d.id,
                   });
-                  await Sleep(1000);
+                  await Sleep(2500);
                   bot.addReaction({
                     channelID: channelID,
                     messageID: res.id,
                     reaction: '🙂'
                   });
-                  await Sleep(1000);
+                  await Sleep(2500);
                   bot.addReaction({
                     channelID: channelID,
                     messageID: res.id,
                     reaction: '🙁'
                   });
-                });
-              }
+                }
+              });
             } else {
               bot.sendMessage({
                   to: channelID,
