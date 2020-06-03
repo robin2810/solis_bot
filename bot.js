@@ -310,8 +310,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
             // &trustedvote <name> [685284276362543115]
             case 'trustedvote':
-            //if(serverID == '685284276362543115') {
-            if(serverID == '689563662008057858') {
+            if(serverID == '685284276362543115') {
               var msg = "";
               var rightUsage = true;
 
