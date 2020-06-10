@@ -279,7 +279,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                       bot.addToRole({
                         serverID: '685284276362543115',
                         userID: userIdFromDisctag,
-                        roleID: '685303870896734208' //bronze
+                        roleID: '685303866392182785' //silver
                       });
                       await Sleep(1000);
                       bot.removeFromRole({
