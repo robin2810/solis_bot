@@ -186,11 +186,13 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                 if(usersList[key].bot == false) {
                   var nickname = membersList.find(membersList => membersList.id === key).nick;
                   console.log(nickname);
+                  var name = "";
                   if(nickname != undefined) {
-                    out = out.concat(nickname, "\n");
+                    name = nickname;
                   } else {
-                    out = out.concat(usersList[key].username, "\n");
+                    name = usersList[key].username;
                   }
+                  out = out.concat(name.replace(/_/g, "\\_").replace(/~/g, "\\~").replace(/\*/g, "\\*"), "\n");
                 }
               }
               bot.sendMessage({
