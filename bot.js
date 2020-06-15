@@ -37,6 +37,34 @@ bot.on('ready', function (evt) {
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
+
+var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
+  var request = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
+  var numOfMembers = 0;
+  try {
+    var response = JSON.parse(getJSON('GET', request).getBody());
+    var numOfMembers = response.guild.members.length;
+  } catch(err) {
+    console.log(err);
+  }
+  bot.editChannelInfo({
+    channelID: '720868375156490290',
+    name: "Guild Members: " + numOfMembers
+  }, function(err, res) {
+    console.log(err);
+    console.log(res);
+  });
+});
+
+/*var jobWeeklyStatSave = scheduler.scheduleJob('0 0 6 ? * MON *', function() {
+  var today = new Date();
+
+  fs.writeFile('stats_' + today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear() + '.json', json, 'utf8', (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+});*/
+
 bot.on('guildMemberAdd', function(member) {
   if(member.guild_id == '685284276362543115') {
     var usersArray = Object.values(bot.users);
@@ -65,6 +93,7 @@ bot.on('guildMemberAdd', function(member) {
     }
   }
 });
+
 bot.on('voiceStateUpdate', function(event) {
   var xhat_vc_id = bot.servers[event.d.guild_id].members[xhat_uid].voice_channel_id;
   //console.log(bot.servers[event.d.guild_id].members);
@@ -130,6 +159,7 @@ bot.on('voiceStateUpdate', function(event) {
     }});
   }
 });
+
 bot.on('message', async function (user, userID, channelID, message, evt) {
 
     var serverID = evt.d.guild_id;
@@ -201,7 +231,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               });
             break;
 
-            // &initiateping <start|stop> [685284276362543115]
+            // @deprecated &initiateping <start|stop> [685284276362543115]
             case 'initiateping':
               if(serverID == '685284276362543115') {
                 if (cmd2 == 'start') {
@@ -468,6 +498,9 @@ function getInventory(uName) {
 
 }
 
+/**
+* @deprecated
+*/
 function initiate_ping(channelID) {
   var currentDate = Date.now();
   var urlOuter = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
