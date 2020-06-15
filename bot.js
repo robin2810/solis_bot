@@ -52,7 +52,6 @@ var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
     name: "Guild Members: " + numOfMembers
   }, function(err, res) {
     console.log(err);
-    console.log(res);
   });
 });
 
