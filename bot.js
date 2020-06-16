@@ -89,7 +89,7 @@ bot.on('voiceStateUpdate', function(event) {
   if(xhat_vc_id != undefined) {
     var usersArray = Object.values(bot.users);
     var membersList = Object.values(bot.servers[event.d.guild_id].members);
-    fs.readFile(__dirname + 'nicks.json', 'utf8', function readFileCallback(err, data){
+    fs.readFile(__dirname + '/nicks.json', 'utf8', function readFileCallback(err, data){
       if (err){
         console.log(err);
       } else {
@@ -135,12 +135,12 @@ bot.on('voiceStateUpdate', function(event) {
         }
       json = JSON.stringify(obj, null, 2); //convert it back to json
       if(JSON.stringify(obj.nicks[0]) != undefined) {
-        fs.writeFile(__dirname + 'nicks.json', json, 'utf8', (err) => {
+        fs.writeFile(__dirname + '/nicks.json', json, 'utf8', (err) => {
           if (err) throw err;
           console.log('The file has been saved!');
         });
       } else {
-        fs.writeFile(__dirname + 'nicks.json', JSON.stringify({"nicks" : []}, null, 2), 'utf8', (err) => {
+        fs.writeFile(__dirname + '/nicks.json', JSON.stringify({"nicks" : []}, null, 2), 'utf8', (err) => {
           if (err) throw err;
           console.log('The file has been saved empty!');
         });
@@ -174,11 +174,11 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                 stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
               }
 
-              fs.readFile(__dirname + 'stats.json', 'utf8', function readFileCallback(err, data){
+              fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
                 if (err){
                   console.log(err);
                 } else {
-                  fs.readFile(__dirname + 'stats_old.json', 'utf8', function readFileCallback(err, data_old){
+                  fs.readFile(__dirname + '/stats_old.json', 'utf8', function readFileCallback(err, data_old){
                     if (err){
                       console.log(err);
                     } else {
@@ -571,7 +571,7 @@ function initiate_ping(channelID) {
     out2 = '',
     dont_return_out = false;
     var previousOut;
-    var messageID = fs.readFileSync(__dirname + 'messageID.txt', 'utf8');
+    var messageID = fs.readFileSync(__dirname + '/messageID.txt', 'utf8');
 
     if(messageID != "") {
       dont_return_out = true;
@@ -614,7 +614,7 @@ function initiate_ping(channelID) {
             if(err == "") {
               console.log(err);
             } else {
-              fs.writeFileSync(__dirname + 'messageID.txt', res.id);
+              fs.writeFileSync(__dirname + '/messageID.txt', res.id);
             }
           });
         }
@@ -646,7 +646,7 @@ function initiate_ping(channelID) {
           if(err == "") {
             console.log(err);
           } else {
-            fs.writeFileSync(__dirname + 'messageID.txt', res.id);
+            fs.writeFileSync(__dirname + '/messageID.txt', res.id);
           }
         });
       }
