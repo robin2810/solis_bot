@@ -224,7 +224,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
                       bot.sendMessage({
                         to: channelID,
-                        message: "***"" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new,
+                        message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*",
                         embed: out
                       });
                     }
