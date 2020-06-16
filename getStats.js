@@ -8,7 +8,7 @@ guildId = '5e58976f8ea8c9832198e154';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 
-//var jobDailyStatSave = scheduler.scheduleJob('* * 6 * * *', function() {
+var jobDailyStatSave = scheduler.scheduleJob('* * 6 * * *', function() {
   var statsObj = {"date":"", "stats":[]};
   var playerName = "";
   var skillAvg = "";
@@ -64,7 +64,7 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
       });
     });
   });
-//});
+});
 
 function calcAverageOfArray(arr) {
   var total = 0.0;
