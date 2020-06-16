@@ -9,8 +9,9 @@ require('.');
 
 var homeDir = '/home/pi/.discord/lxt_bot/';
 
-var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "trustedvote <name> <interview|promotion> [@]"],
+var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "leaderboard <stat>", "trustedvote <name> <interview|promotion> [@]"],
 commandsWynn = ["chiefvote", "ping", "memberlist"],
+leaderboardStats = ["skillAverage"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
 guildId = '5e58976f8ea8c9832198e154',
@@ -163,6 +164,76 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
         //args = args.splice(1);
         switch(cmd) {
+
+            // &leaderboard <stat> [685284276362543115]
+            case 'leaderboard':
+              var returnObj = {"date_new":"", "date_old":"", "stats":[]};
+              var statsObj, oldStatsObj, stat, textStat;
+
+              const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 17.5, 15, 12.5, 10, 5, 0];
+
+              if(cmd2 = "skillAverage") {
+                stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
+              }
+
+              fs.readFile('stats.json', 'utf8', function readFileCallback(err, data){
+                if (err){
+                  console.log(err);
+                } else {
+                  fs.readFile('stats_old.json', 'utf8', function readFileCallback(err, data_old){
+                    if (err){
+                      console.log(err);
+                    } else {
+                      statsObj = JSON.parse(data);
+                      oldStatsObj = JSON.parse(data_old);
+                      returnObj.date_new = statsObj.date;
+                      returnObj.date_old = oldStatsObj.date;
+
+                      for(mem of statsObj.stats) {
+                        var bool = false;
+                        for(oldMem of oldStatsObj.stats) {
+                          if(Object.keys(oldMem)[0] == Object.keys(mem)[0]) {
+                            returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat]}});
+                            break;
+                          }
+                        }
+                      }
+                      for(var j = returnObj.stats.length-1; j > 0; j--) {
+                        for(var i = 0; i < j; i++) {
+                          if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new == "no api :(") {
+                            var tempObj = returnObj.stats[j];
+                            returnObj.stats[j] = returnObj.stats[i];
+                            returnObj.stats[i] = tempObj;
+                          } else if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new < returnObj.stats[i+1][Object.keys(returnObj.stats[i+1])[0]].new) {
+                            var tempObj = returnObj.stats[i+1];
+                            returnObj.stats[i+1] = returnObj.stats[i];
+                            returnObj.stats[i] = tempObj;
+                          }
+                        }
+                      }
+
+                      var out = {"color": 16777215, "fields": []};
+                      var pos = 1;
+                      for(entry of returnObj.stats) {
+                        for(i in valArray) {
+                          if(valArray[i-1] >= entry[Object.keys(entry)[0]].new && entry[Object.keys(entry)[0]].new > valArray[i]) {
+                            out = setEmbedValues(pos, valArray[i-1] + "-" + valArray[i], out, entry);
+                            pos++;
+                          }
+                        }
+                      }
+                      out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
+
+                      bot.sendMessage({
+                        to: channelID,
+                        message: '', // You can also send a message with the embed.
+                        embed: out
+                      });
+                    }
+                  });
+                }
+              });
+            break;
 
             // &inventories <Username> [685284276362543115]
             case 'inventories':
@@ -600,4 +671,25 @@ function decodeBase64(s) {
         while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
     }
     return r;
+}
+
+function setEmbedValues(position, name, out, entry) {
+  if(Object.keys(out.fields).length == 0) {
+    out.fields.push({"name": name, "value": "```css\n"});
+  } else if(out.fields[out.fields.length-1].name != name) {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
+    out.fields.push({"name": name, "value": "```css\n"});
+  }
+  out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + ('#'+position).padEnd(5, ' ') + Object.keys(entry)[0] + ": " + (entry[Object.keys(entry)[0]].new).toString().replace(".", "․") + " [";
+  if(entry[Object.keys(entry)[0]].new == entry[Object.keys(entry)[0]].old) {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+-0.0] " + '➡\n';
+  } else if(entry[Object.keys(entry)[0]].new > entry[Object.keys(entry)[0]].old) {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+" + Math.round(((entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + Number.EPSILON) * 100) / 100 + "] " + '↗\n';
+  } else if(entry[Object.keys(entry)[0]].new < entry[Object.keys(entry)[0]].old) {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + "] " + '↘\n';
+  } else {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "\n";
+  }
+
+  return out;
 }

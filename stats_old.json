@@ -1,5 +1,5 @@
 {
-  "date": "16.5.2020",
+  "date": "16 June 2020",
   "stats": [
     {
       "Xhat": {
@@ -18,22 +18,22 @@
     },
     {
       "Crudelia": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "Gucci_Gay": {
         "skillAvg": 9.75
       }
     },
     {
+      "Gucci_Gay": {
+        "skillAvg": "no api :("
+      }
+    },
+    {
       "Diuh": {
-        "skillAvg": 0
+        "skillAvg": 14.13
       }
     },
     {
       "fedrik12": {
-        "skillAvg": 14.13
+        "skillAvg": "no api :("
       }
     },
     {
@@ -48,32 +48,32 @@
     },
     {
       "DragonFlyerx": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "tettys": {
         "skillAvg": 16.13
       }
     },
     {
-      "stallingbox": {
+      "tettys": {
         "skillAvg": 21.38
       }
     },
     {
-      "TTV_Riverboi": {
+      "stallingbox": {
         "skillAvg": 22.88
       }
     },
     {
-      "zanderk112901": {
+      "TTV_Riverboi": {
         "skillAvg": 16.75
       }
     },
     {
-      "MrDoberz": {
+      "zanderk112901": {
         "skillAvg": 14.13
+      }
+    },
+    {
+      "MrDoberz": {
+        "skillAvg": 21
       }
     },
     {
@@ -88,12 +88,12 @@
     },
     {
       "Fru_Ty": {
-        "skillAvg": 0
+        "skillAvg": 14.5
       }
     },
     {
       "SpectreV2": {
-        "skillAvg": 14.5
+        "skillAvg": "no api :("
       }
     },
     {
@@ -103,7 +103,7 @@
     },
     {
       "Granbean": {
-        "skillAvg": 0
+        "skillAvg": 19
       }
     },
     {
@@ -113,22 +113,22 @@
     },
     {
       "RyanJTheBoss": {
-        "skillAvg": 0
+        "skillAvg": "no api :("
       }
     },
     {
       "MagicalMind": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "I_am_a_leaf1": {
         "skillAvg": 8.5
       }
     },
     {
-      "MakiSashi": {
+      "I_am_a_leaf1": {
         "skillAvg": 20.88
+      }
+    },
+    {
+      "MakiSashi": {
+        "skillAvg": 14.38
       }
     },
     {
@@ -138,17 +138,17 @@
     },
     {
       "MineKolya": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "tosurion": {
         "skillAvg": 23.25
       }
     },
     {
+      "tosurion": {
+        "skillAvg": 14.13
+      }
+    },
+    {
       "Bubblesded": {
-        "skillAvg": 0
+        "skillAvg": 10.38
       }
     },
     {
@@ -183,7 +183,7 @@
     },
     {
       "shpde": {
-        "skillAvg": 0
+        "skillAvg": 9.88
       }
     },
     {
@@ -208,12 +208,12 @@
     },
     {
       "LynxWinter": {
-        "skillAvg": 0
+        "skillAvg": 12.88
       }
     },
     {
       "_Cashews_": {
-        "skillAvg": 12.88
+        "skillAvg": 12.13
       }
     },
     {
@@ -228,7 +228,7 @@
     },
     {
       "CherryArtifact": {
-        "skillAvg": 0
+        "skillAvg": 21.25
       }
     },
     {
@@ -238,47 +238,47 @@
     },
     {
       "Nink3ndo": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "karateman2400": {
         "skillAvg": 21
       }
     },
     {
-      "DarkMythMaker": {
+      "karateman2400": {
         "skillAvg": 21.63
       }
     },
     {
-      "10s3r_Ch1ck3n": {
-        "skillAvg": 0
+      "DarkMythMaker": {
+        "skillAvg": 16
       }
     },
     {
-      "Bndhups": {
+      "10s3r_Ch1ck3n": {
         "skillAvg": 24
       }
     },
     {
-      "ImGoing": {
-        "skillAvg": 0
+      "Bndhups": {
+        "skillAvg": "no api :("
       }
     },
     {
-      "ThekeyLord138": {
+      "ImGoing": {
         "skillAvg": 18.13
       }
     },
     {
-      "82ts": {
+      "ThekeyLord138": {
         "skillAvg": 19.75
       }
     },
     {
-      "bats1101": {
+      "82ts": {
         "skillAvg": 18.88
+      }
+    },
+    {
+      "bats1101": {
+        "skillAvg": 14.63
       }
     },
     {
@@ -293,22 +293,22 @@
     },
     {
       "IKillTheBeatI": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "rapid_angelz": {
         "skillAvg": 21.88
       }
     },
     {
-      "Cheeshsticks": {
+      "rapid_angelz": {
         "skillAvg": 16.13
       }
     },
     {
+      "Cheeshsticks": {
+        "skillAvg": "no api :("
+      }
+    },
+    {
       "EnesTheinfinity": {
-        "skillAvg": 0
+        "skillAvg": 14
       }
     },
     {
@@ -343,27 +343,27 @@
     },
     {
       "Kurbeiy": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "wickeddaisey48": {
         "skillAvg": 20
       }
     },
     {
-      "YourHayness": {
+      "wickeddaisey48": {
         "skillAvg": 21.13
       }
     },
     {
+      "YourHayness": {
+        "skillAvg": 15.75
+      }
+    },
+    {
       "CheesyCanine": {
-        "skillAvg": 0
+        "skillAvg": 16.75
       }
     },
     {
       "vatito7": {
-        "skillAvg": 16.75
+        "skillAvg": "no api :("
       }
     },
     {
@@ -373,17 +373,17 @@
     },
     {
       "heig": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "Boebim48": {
         "skillAvg": 16.75
       }
     },
     {
-      "Freshavacadoos": {
+      "Boebim48": {
         "skillAvg": 19
+      }
+    },
+    {
+      "Freshavacadoos": {
+        "skillAvg": 16.38
       }
     },
     {
@@ -398,27 +398,27 @@
     },
     {
       "stripedspot": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "zjcm": {
         "skillAvg": 19.5
       }
     },
     {
-      "Alkali": {
+      "zjcm": {
         "skillAvg": 16.5
       }
     },
     {
+      "Alkali": {
+        "skillAvg": "no api :("
+      }
+    },
+    {
       "Shulked": {
-        "skillAvg": 0
+        "skillAvg": "no api :("
       }
     },
     {
       "PorkMC": {
-        "skillAvg": 0
+        "skillAvg": "no api :("
       }
     },
     {
@@ -433,12 +433,12 @@
     },
     {
       "Xhat__": {
-        "skillAvg": 0
+        "skillAvg": 17.5
       }
     },
     {
       "sn_3k": {
-        "skillAvg": 17.5
+        "skillAvg": 16.88
       }
     },
     {
@@ -448,17 +448,17 @@
     },
     {
       "ungdongi": {
-        "skillAvg": 0
+        "skillAvg": "no api :("
       }
     },
     {
       "Acrued": {
-        "skillAvg": 0
+        "skillAvg": 28.88
       }
     },
     {
       "NoneForAll": {
-        "skillAvg": 28.75
+        "skillAvg": 16
       }
     },
     {
@@ -468,7 +468,7 @@
     },
     {
       "IornLining": {
-        "skillAvg": 19.63
+        "skillAvg": 19.88
       }
     },
     {
@@ -483,17 +483,17 @@
     },
     {
       "CreeperAwMan3113": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "Master_Gause": {
         "skillAvg": 20.88
       }
     },
     {
-      "LilDoggo_": {
+      "Master_Gause": {
         "skillAvg": 17.25
+      }
+    },
+    {
+      "LilDoggo_": {
+        "skillAvg": 18.38
       }
     },
     {
@@ -503,7 +503,7 @@
     },
     {
       "_Modryseq": {
-        "skillAvg": 0
+        "skillAvg": 18.38
       }
     },
     {
@@ -528,7 +528,7 @@
     },
     {
       "FinalPizza": {
-        "skillAvg": 0
+        "skillAvg": 18.63
       }
     },
     {
@@ -538,22 +538,22 @@
     },
     {
       "SoDepressed": {
-        "skillAvg": 0
-      }
-    },
-    {
-      "TaiNhiVu": {
         "skillAvg": 17.75
       }
     },
     {
-      "iTof": {
+      "TaiNhiVu": {
         "skillAvg": 21.75
       }
     },
     {
-      "eostrand": {
+      "iTof": {
         "skillAvg": 18.13
+      }
+    },
+    {
+      "eostrand": {
+        "skillAvg": 17.5
       }
     },
     {
@@ -563,12 +563,12 @@
     },
     {
       "ObjHolder": {
-        "skillAvg": 13.38
+        "skillAvg": 1.75
       }
     },
     {
       "MS2Pine0": {
-        "skillAvg": 0
+        "skillAvg": 15.38
       }
     },
     {
