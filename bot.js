@@ -37,7 +37,7 @@ bot.on('ready', function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 
-/*var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
+var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
   var request = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
   var numOfMembers = 0;
   try {
@@ -52,7 +52,7 @@ bot.on('ready', function (evt) {
   }, function(err, res) {
     console.log(err);
   });
-});*/
+});
 
 bot.on('guildMemberAdd', function(member) {
   if(member.guild_id == '685284276362543115') {
@@ -224,7 +224,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
                       bot.sendMessage({
                         to: channelID,
-                        message: '', // You can also send a message with the embed.
+                        message: "***"" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new,
                         embed: out
                       });
                     }
