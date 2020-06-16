@@ -38,7 +38,7 @@ bot.on('ready', function (evt) {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 
-var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
+/*var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
   var request = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
   var numOfMembers = 0;
   try {
@@ -52,15 +52,6 @@ var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
     name: "Guild Members: " + numOfMembers
   }, function(err, res) {
     console.log(err);
-  });
-});
-
-/*var jobWeeklyStatSave = scheduler.scheduleJob('0 0 6 ? * MON *', function() {
-  var today = new Date();
-
-  fs.writeFile('stats_' + today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear() + '.json', json, 'utf8', (err) => {
-    if (err) throw err;
-    console.log('The file has been saved!');
   });
 });*/
 
@@ -609,4 +600,4 @@ function decodeBase64(s) {
         while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
     }
     return r;
-};
+}
