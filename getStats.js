@@ -8,7 +8,7 @@ guildId = '5e58976f8ea8c9832198e154';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 
-var jobDailyStatSave = scheduler.scheduleJob('* * 6 * * *', function() {
+var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
   var statsObj = {"date":"", "stats":[]};
   var playerName = "";
   var skillAvg = "";
@@ -48,17 +48,17 @@ var jobDailyStatSave = scheduler.scheduleJob('* * 6 * * *', function() {
       skillAveragesForPlayer.push(skillAvg);
     }
     if(Math.max(...skillAveragesForPlayer) == 0) {
-      statsObj.stats.push({[playerName]: {"skillAvg": "no api :("}});
+      statsObj.stats.push({[playerName]: {"skillAvg": "no api"}});
     } else {
       statsObj.stats.push({[playerName]: {"skillAvg": Math.max(...skillAveragesForPlayer)}});
     }
   }
 
-  fs.unlink(__dirname + 'stats_old.json', function (err) {
+  fs.unlink(__dirname + '/stats_old.json', function (err) {
     if (err) throw err;
-    fs.rename(__dirname + 'stats.json', 'stats_old.json', function (err) {
+    fs.rename(__dirname + '/stats.json', 'stats_old.json', function (err) {
       if (err) throw err;
-      fs.writeFile(__dirname + 'stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
+      fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
         if (err) throw err;
         console.log('The file has been saved!');
       });
