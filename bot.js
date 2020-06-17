@@ -7,7 +7,7 @@ var nbt = require('nbt');
 var scheduler = require('node-schedule');
 require('.');
 
-var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "leaderboard <stat>", "trustedvote <name> <interview|promotion> [@]"],
+var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "leaderboard <stat> [\"change\"]", "trustedvote <name> <interview|promotion> [@]"],
 commandsWynn = ["chiefvote", "ping", "memberlist"],
 leaderboardStats = ["skillAverage"],
 initiatePing,
@@ -35,23 +35,26 @@ bot.on('ready', function (evt) {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-});
+    logger.info('Current working dir: ' + __dirname);
 
-var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
-  var request = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
-  var numOfMembers = 0;
-  try {
-    var response = JSON.parse(getJSON('GET', request).getBody());
-    var numOfMembers = response.guild.members.length;
-  } catch(err) {
-    console.log(err);
-  }
-  bot.editChannelInfo({
-    channelID: '720868375156490290',
-    name: "Guild Members: " + numOfMembers
-  }, function(err, res) {
-    console.log(err);
-  });
+    if(Object.keys(bot.channels).includes('720868375156490290')) {
+      var jobCurrentGuildMembers = scheduler.scheduleJob('0 * * * * *', function() {
+        var request = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
+        var numOfMembers = 0;
+        try {
+          var response = JSON.parse(getJSON('GET', request).getBody());
+          var numOfMembers = response.guild.members.length;
+        } catch(err) {
+          console.log(err);
+        }
+        bot.editChannelInfo({
+          channelID: '720868375156490290',
+          name: "Guild Members: " + numOfMembers
+        }, function(err, res) {
+          console.log(err);
+        });
+      });
+    }
 });
 
 bot.on('guildMemberAdd', function(member) {
@@ -166,71 +169,114 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
             // &leaderboard <stat> [685284276362543115]
             case 'leaderboard':
               var returnObj = {"date_new":"", "date_old":"", "stats":[]};
-              var statsObj, oldStatsObj, stat, textStat;
+              var statsObj, oldStatsObj, stat, textStat, valArray;
+              var sortByChange = false;
 
               const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 17.5, 15, 12.5, 10, 5, 0];
-
-              if(cmd2 = "skillAverage") {
+              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0];
+              if(cmd2 == "skillAverage") {
                 stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
               }
+              if(args[2] == "change") {
+                sortByChange = true; valArray = skillAvgValuesbyChange;
+              }
+              if(cmd2 == "help" || !leaderboardStats.includes(cmd2)) {
+                bot.sendMessage({
+                  to: channelID,
+                  message: "Usage: \'&leaderboard <stat> [\"change\"]\'\n currently available stats: " + leaderboardStats.join(", ") + "\noptional parameter [\"change\"] sorts stats by change"
+                });
+              } else {
+                fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
+                  if (err){
+                    console.log(err);
+                  } else {
+                    fs.readFile(__dirname + '/stats_old.json', 'utf8', function readFileCallback(err, data_old){
+                      if (err){
+                        console.log(err);
+                      } else {
+                        statsObj = JSON.parse(data);
+                        oldStatsObj = JSON.parse(data_old);
+                        returnObj.date_new = statsObj.date;
+                        returnObj.date_old = oldStatsObj.date;
 
-              fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
-                if (err){
-                  console.log(err);
-                } else {
-                  fs.readFile(__dirname + '/stats_old.json', 'utf8', function readFileCallback(err, data_old){
-                    if (err){
-                      console.log(err);
-                    } else {
-                      statsObj = JSON.parse(data);
-                      oldStatsObj = JSON.parse(data_old);
-                      returnObj.date_new = statsObj.date;
-                      returnObj.date_old = oldStatsObj.date;
-
-                      for(mem of statsObj.stats) {
-                        var bool = false;
-                        for(oldMem of oldStatsObj.stats) {
-                          if(Object.keys(oldMem)[0] == Object.keys(mem)[0]) {
-                            returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat]}});
-                            break;
+                        for(mem of statsObj.stats) {
+                          var bool = false;
+                          for(oldMem of oldStatsObj.stats) {
+                            if(Object.keys(oldMem)[0] == Object.keys(mem)[0]) {
+                              returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat]}});
+                              break;
+                            }
                           }
                         }
-                      }
-                      for(var j = returnObj.stats.length-1; j > 0; j--) {
-                        for(var i = 0; i < j; i++) {
-                          if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new == "no api :(") {
-                            var tempObj = returnObj.stats[j];
-                            returnObj.stats[j] = returnObj.stats[i];
-                            returnObj.stats[i] = tempObj;
-                          } else if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new < returnObj.stats[i+1][Object.keys(returnObj.stats[i+1])[0]].new) {
-                            var tempObj = returnObj.stats[i+1];
-                            returnObj.stats[i+1] = returnObj.stats[i];
-                            returnObj.stats[i] = tempObj;
+                        for(var j = returnObj.stats.length-1; j > 0; j--) {
+                          if(sortByChange) {
+                            for(var i = 0; i < j; i++) {
+                              if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new == "no api") {
+                                var tempObj = returnObj.stats[j];
+                                returnObj.stats[j] = returnObj.stats[i];
+                                returnObj.stats[i] = tempObj;
+                              } else if((returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new - returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].old) < (returnObj.stats[i+1][Object.keys(returnObj.stats[i+1])[0]].new - returnObj.stats[i+1][Object.keys(returnObj.stats[i+1])[0]].old)) {
+                                var tempObj = returnObj.stats[i+1];
+                                returnObj.stats[i+1] = returnObj.stats[i];
+                                returnObj.stats[i] = tempObj;
+                              }
+                            }
+                          } else {
+                            for(var i = 0; i < j; i++) {
+                              if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new == "no api") {
+                                var tempObj = returnObj.stats[j];
+                                returnObj.stats[j] = returnObj.stats[i];
+                                returnObj.stats[i] = tempObj;
+                              } else if(returnObj.stats[i][Object.keys(returnObj.stats[i])[0]].new < returnObj.stats[i+1][Object.keys(returnObj.stats[i+1])[0]].new) {
+                                var tempObj = returnObj.stats[i+1];
+                                returnObj.stats[i+1] = returnObj.stats[i];
+                                returnObj.stats[i] = tempObj;
+                              }
+                            }
                           }
                         }
-                      }
 
-                      var out = {"color": 16777215, "fields": []};
-                      var pos = 1;
-                      for(entry of returnObj.stats) {
-                        for(i in valArray) {
-                          if(valArray[i-1] >= entry[Object.keys(entry)[0]].new && entry[Object.keys(entry)[0]].new > valArray[i]) {
-                            out = setEmbedValues(pos, valArray[i-1] + "-" + valArray[i], out, entry);
+                        console.log(JSON.stringify(returnObj));
+
+                        var out = {"color": 16777215, "fields": []};
+                        var pos = 1;
+                        for(entry of returnObj.stats) {
+                          for(i in valArray) {
+                            if(sortByChange) {
+                              if(valArray[i-1] >= (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) && (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) > valArray[i]) {
+                                out = setEmbedValues(pos, valArray[i] + "-" + valArray[i-1], out, entry);
+                                pos++;
+                              }
+                            } else {
+                              if(valArray[i-1] >= entry[Object.keys(entry)[0]].new && entry[Object.keys(entry)[0]].new > valArray[i]) {
+                                out = setEmbedValues(pos, valArray[i] + "-" + valArray[i-1], out, entry);
+                                pos++;
+                              }
+                            }
+                          }
+                          if(sortByChange && (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) == 0) {
+                            out = setEmbedValues(pos, "0.0", out, entry);
                             pos++;
                           }
+                          if(entry[Object.keys(entry)[0]].new == "no api") {
+                           out = setEmbedValues(pos, "no api", out, entry);
+                           pos++;
+                          }
                         }
-                      }
-                      out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
+                        out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
 
-                      bot.sendMessage({
-                        to: channelID,
-                        message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*",
-                        embed: out
-                      });
-                    }
-                  });
-                }
-              });
+                        console.log(out);
+
+                        bot.sendMessage({
+                          to: channelID,
+                          message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*",
+                          embed: out
+                        });
+                      }
+                    });
+                  }
+                });
+              }
             break;
 
             // &inventories <Username> [685284276362543115]
