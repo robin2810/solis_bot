@@ -173,7 +173,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               var sortByChange = false;
 
               const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 17.5, 15, 12.5, 10, 5, 0];
-              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0];
+              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.0];
               if(cmd2 == "skillAverage") {
                 stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
               }
@@ -236,8 +236,6 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                           }
                         }
 
-                        console.log(JSON.stringify(returnObj));
-
                         var out = {"color": 16777215, "fields": []};
                         var pos = 1;
                         for(entry of returnObj.stats) {
@@ -255,7 +253,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                             }
                           }
                           if(sortByChange && (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) == 0) {
-                            out = setEmbedValues(pos, "0.0", out, entry);
+                            //out = setEmbedValues(pos, "0.0", out, entry);
                             pos++;
                           }
                           if(entry[Object.keys(entry)[0]].new == "no api") {
@@ -264,8 +262,6 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                           }
                         }
                         out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
-
-                        console.log(out);
 
                         bot.sendMessage({
                           to: channelID,
