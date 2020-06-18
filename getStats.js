@@ -58,11 +58,11 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
     fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
       if (err) throw err;
       console.log('The stats have been copied to stats_old!');
+      fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
+        if (err) throw err;
+        console.log('The new stats have been saved!');
+      });
     });
-  });
-  fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
-    if (err) throw err;
-    console.log('The file has been saved!');
   });
 });
 
