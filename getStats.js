@@ -54,15 +54,15 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
     }
   }
 
-  fs.unlink(__dirname + '/stats_old.json', function (err) {
-    if (err) throw err;
-    fs.rename(__dirname + '/stats.json', 'stats_old.json', function (err) {
+  fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
+    fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
       if (err) throw err;
-      fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
-        if (err) throw err;
-        console.log('The file has been saved!');
-      });
+      console.log('The stats have been copied to stats_old!');
     });
+  });
+  fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
   });
 });
 
