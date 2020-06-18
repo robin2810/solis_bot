@@ -173,7 +173,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               var sortByChange = false;
 
               const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 17.5, 15, 12.5, 10, 5, 0];
-              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.0];
+              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0];
               if(cmd2 == "skillAverage") {
                 stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
               }
