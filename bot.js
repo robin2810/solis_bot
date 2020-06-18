@@ -240,8 +240,9 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                         var pos = 1;
                         for(entry of returnObj.stats) {
                           for(i in valArray) {
+                            var diff = Math.round( ((entry[Object.keys(entry)[0]].new + Number.EPSILON)*100) - ((entry[Object.keys(entry)[0]].old + Number.EPSILON)*100) ) / 100;
                             if(sortByChange) {
-                              if(valArray[i-1] >= (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) && (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) > valArray[i]) {
+                              if(valArray[i-1] >= diff && diff > valArray[i]) {
                                 out = setEmbedValues(pos, valArray[i] + "-" + valArray[i-1], out, entry);
                                 pos++;
                               }
