@@ -8,14 +8,14 @@ guildId = '5e58976f8ea8c9832198e154';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 
-var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
+// var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
   var statsObj = {"date":"", "stats":[]};
   var playerName = "";
   var skillAvg = "";
 
   console.log("Calculating date...");
   var today = new Date();
-  statsObj.date = today.getDate() + ' ' + monthNames[today.getMonth()] + ' ' + today.getFullYear();
+  statsObj.date = today.getUTCDate() + ' ' + monthNames[today.getUTCMonth()] + ' ' + today.getUTCFullYear() + ' (' + getTime(today) + ')';
 
   console.log("Requesting guild members...");
   var requestGuild = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
@@ -64,7 +64,7 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
       });
     });
   });
-});
+// });
 
 function calcAverageOfArray(arr) {
   var total = 0.0;
@@ -84,5 +84,17 @@ function skillToLevel(skillXP) {
       i++;
     }
     return i-1 + ((skillXP-levelXP[i-1])/(levelXP[i]-levelXP[i-1]));
+  }
+}
+
+function getTime(date) {
+  if(date.getUTCHours() == 0) {
+    return '12:' + date.getUTCMinutes() + 'am UTC';
+  } else if(date.getUTCHours() < 12) {
+    return date.getUTCHours() + ':' + date.getUTCMinutes() + 'am UTC';
+  } else if(date.getUTCHours() == 12) {
+    return '12:' + date.getUTCMinutes() + 'pm UTC';
+  } else {
+    return (date.getUTCHours()-12) + ':' + date.getUTCMinutes() + 'pm UTC';
   }
 }
