@@ -43,7 +43,7 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
                 skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
                 skillToLevel(playerStatsOnProfile.experience_skill_taming), skillToLevel(playerStatsOnProfile.experience_skill_enchanting),
                 skillToLevel(playerStatsOnProfile.experience_skill_fishing), skillToLevel(playerStatsOnProfile.experience_skill_foraging)];
-      skillAvg = calcAverageOfArray(arr);
+      skillAvg = Math.round((calcAverageOfArray(arr) + Number.EPSILON) * 100) / 100;
       console.log("Recieved Skill Average of " + skillAvg + " for " + playerName + " on profile " + prof.cute_name);
       skillAveragesForPlayer.push(skillAvg);
     }
@@ -71,7 +71,7 @@ function calcAverageOfArray(arr) {
   for(i of arr) {
     total += i;
   }
-  return Math.round(((total / arr.length) + Number.EPSILON) * 100) / 100;
+  return (total / arr.length);
 }
 
 function skillToLevel(skillXP) {
