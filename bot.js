@@ -51,7 +51,9 @@ bot.on('ready', function (evt) {
           channelID: '720868375156490290',
           name: "Guild Members: " + numOfMembers
         }, function(err, res) {
-          console.log(err);
+          if(err) {
+            console.log(err);
+          }
         });
       });
     }
