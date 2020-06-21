@@ -89,12 +89,12 @@ function skillToLevel(skillXP) {
 
 function getTime(date) {
   if(date.getUTCHours() == 0) {
-    return '12:' + date.getUTCMinutes() + 'am UTC';
+    return '12:' + (date.getUTCMinutes()).toString().padStart(2, '0') + 'am UTC';
   } else if(date.getUTCHours() < 12) {
-    return date.getUTCHours() + ':' + date.getUTCMinutes() + 'am UTC';
+    return date.getUTCHours() + ':' + (date.getUTCMinutes()).toString().padStart(2, '0') + 'am UTC';
   } else if(date.getUTCHours() == 12) {
-    return '12:' + date.getUTCMinutes() + 'pm UTC';
+    return '12:' + (date.getUTCMinutes()).toString().padStart(2, '0') + 'pm UTC';
   } else {
-    return (date.getUTCHours()-12) + ':' + date.getUTCMinutes() + 'pm UTC';
+    return (date.getUTCHours()-12) + ':' + (date.getUTCMinutes()).toString().padStart(2, '0') + 'pm UTC';
   }
 }
