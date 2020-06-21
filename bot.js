@@ -35,7 +35,6 @@ var bot = new Discord.Client({
 var jobConnectBot = scheduler.scheduleJob('*/30 * * * * *', function() {
   if(!bot.connected) {
     bot.connect();
-  } else {
   }
 });
 
