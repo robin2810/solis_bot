@@ -8,61 +8,66 @@ guildId = '5e58976f8ea8c9832198e154';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 
-var jobDailyStatSave = scheduler.scheduleJob('0 0 7 * * *', function() {
+var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
   var statsObj = {"date":"", "stats":[]};
   var playerName = "";
   var skillAvg = "";
 
-  console.log("Calculating date...");
-  var today = new Date();
-  statsObj.date = today.getUTCDate() + ' ' + monthNames[today.getUTCMonth()] + ' ' + today.getUTCFullYear() + ' (' + getTime(today) + ')';
-
-  console.log("Requesting guild members...");
-  var requestGuild = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
-  var responseGuild = JSON.parse(getJSON('GET', requestGuild).getBody());
-  var guildMembers = responseGuild.guild.members;
-  for(mem of guildMembers) {
-    console.log("");
-    console.log("Requesting name for UUID " + mem.uuid + "...");
-    var requestPlayer = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + mem.uuid;
-    var responsePlayer = JSON.parse(getJSON('GET', requestPlayer).getBody());
-    playerName = responsePlayer.player.displayname;
-
-    console.log("Requesting Profiles for " + playerName + "...");
-    var requestProfiles = 'https://api.hypixel.net/skyblock/profiles?key=' + apiKey + '&uuid=' + mem.uuid;
-    var responseProfiles = JSON.parse(getJSON('GET', requestProfiles).getBody());
-    playerProfiles = responseProfiles.profiles;
-
-    var skillAveragesForPlayer = [];
-    for(prof of playerProfiles) {
-      console.log("Requesting stats for profile " + prof.cute_name + "...");
-      var requestProfile = 'https://api.hypixel.net/skyblock/profile?key=' + apiKey + '&profile=' + prof.profile_id;
-      var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
-      var playerStatsOnProfile = responseProfile.profile.members[mem.uuid];
-      var arr = [skillToLevel(playerStatsOnProfile.experience_skill_combat), skillToLevel(playerStatsOnProfile.experience_skill_mining),
-                skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
-                skillToLevel(playerStatsOnProfile.experience_skill_taming), skillToLevel(playerStatsOnProfile.experience_skill_enchanting),
-                skillToLevel(playerStatsOnProfile.experience_skill_fishing), skillToLevel(playerStatsOnProfile.experience_skill_foraging)];
-      skillAvg = Math.round((calcAverageOfArray(arr) + Number.EPSILON) * 100) / 100;
-      console.log("Recieved Skill Average of " + skillAvg + " for " + playerName + " on profile " + prof.cute_name);
-      skillAveragesForPlayer.push(skillAvg);
-    }
-    if(Math.max(...skillAveragesForPlayer) == 0) {
-      statsObj.stats.push({[playerName]: {"skillAvg": "no api"}});
-    } else {
-      statsObj.stats.push({[playerName]: {"skillAvg": Math.max(...skillAveragesForPlayer)}});
-    }
-  }
-
   fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
-    fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
-      if (err) throw err;
-      console.log('The stats have been copied to stats_old!');
-      fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
-        if (err) throw err;
-        console.log('The new stats have been saved!');
-      });
-    });
+
+    var d = new Date(JSON.parse(data).date);
+    console.log("Calculating date...");
+    var today = new Date();
+    statsObj.date = today.getUTCDate() + ' ' + monthNames[today.getUTCMonth()] + ' ' + today.getUTCFullYear() + ' (' + getTime(today) + ')';
+
+    if(d.getDate() != today.getDate() || d.getMonth() != today.getMonth() || d.getFullYear() != today.getFullYear()) {
+
+      console.log("Requesting guild members...");
+      var requestGuild = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
+      var responseGuild = JSON.parse(getJSON('GET', requestGuild).getBody());
+      var guildMembers = responseGuild.guild.members;
+      for(mem of guildMembers) {
+        console.log("");
+        console.log("Requesting name for UUID " + mem.uuid + "...");
+        var requestPlayer = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + mem.uuid;
+        var responsePlayer = JSON.parse(getJSON('GET', requestPlayer).getBody());
+        playerName = responsePlayer.player.displayname;
+
+        console.log("Requesting Profiles for " + playerName + "...");
+        var requestProfiles = 'https://api.hypixel.net/skyblock/profiles?key=' + apiKey + '&uuid=' + mem.uuid;
+        var responseProfiles = JSON.parse(getJSON('GET', requestProfiles).getBody());
+        playerProfiles = responseProfiles.profiles;
+
+        var skillAveragesForPlayer = [];
+        for(prof of playerProfiles) {
+          console.log("Requesting stats for profile " + prof.cute_name + "...");
+          var requestProfile = 'https://api.hypixel.net/skyblock/profile?key=' + apiKey + '&profile=' + prof.profile_id;
+          var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
+          var playerStatsOnProfile = responseProfile.profile.members[mem.uuid];
+          var arr = [skillToLevel(playerStatsOnProfile.experience_skill_combat), skillToLevel(playerStatsOnProfile.experience_skill_mining),
+            skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
+            skillToLevel(playerStatsOnProfile.experience_skill_taming), skillToLevel(playerStatsOnProfile.experience_skill_enchanting),
+            skillToLevel(playerStatsOnProfile.experience_skill_fishing), skillToLevel(playerStatsOnProfile.experience_skill_foraging)];
+            skillAvg = Math.round((calcAverageOfArray(arr) + Number.EPSILON) * 100) / 100;
+            console.log("Recieved Skill Average of " + skillAvg + " for " + playerName + " on profile " + prof.cute_name);
+            skillAveragesForPlayer.push(skillAvg);
+          }
+          if(Math.max(...skillAveragesForPlayer) == 0) {
+            statsObj.stats.push({[playerName]: {"skillAvg": "no api"}});
+          } else {
+            statsObj.stats.push({[playerName]: {"skillAvg": Math.max(...skillAveragesForPlayer)}});
+          }
+        }
+
+        fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
+          if (err) throw err;
+          console.log('The stats have been copied to stats_old!');
+          fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
+            if (err) throw err;
+            console.log('The new stats have been saved!');
+          });
+        });
+    }
   });
 });
 
