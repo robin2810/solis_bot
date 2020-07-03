@@ -13,7 +13,7 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
   var playerName = "";
   var skillAvg = "";
 
-  fs.readFile(__dirname + '/stats.json', 'utf8', function readFileCallback(err, data){
+  fs.readFile(__dirname + '/stats.json', 'utf8', async function readFileCallback(err, data){
 
     var d = new Date(JSON.parse(data).date);
     console.log("Calculating date...");
@@ -25,17 +25,20 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
       console.log("Requesting guild members...");
       var requestGuild = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
       var responseGuild = JSON.parse(getJSON('GET', requestGuild).getBody());
+      await Sleep(500);
       var guildMembers = responseGuild.guild.members;
       for(mem of guildMembers) {
         console.log("");
         console.log("Requesting name for UUID " + mem.uuid + "...");
         var requestPlayer = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + mem.uuid;
         var responsePlayer = JSON.parse(getJSON('GET', requestPlayer).getBody());
+        await Sleep(500);
         playerName = responsePlayer.player.displayname;
 
         console.log("Requesting Profiles for " + playerName + "...");
         var requestProfiles = 'https://api.hypixel.net/skyblock/profiles?key=' + apiKey + '&uuid=' + mem.uuid;
         var responseProfiles = JSON.parse(getJSON('GET', requestProfiles).getBody());
+        await Sleep(500);
         playerProfiles = responseProfiles.profiles;
 
         var skillAveragesForPlayer = [];
@@ -43,6 +46,7 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
           console.log("Requesting stats for profile " + prof.cute_name + "...");
           var requestProfile = 'https://api.hypixel.net/skyblock/profile?key=' + apiKey + '&profile=' + prof.profile_id;
           var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
+          await Sleep(500);
           var playerStatsOnProfile = responseProfile.profile.members[mem.uuid];
           var arr = [skillToLevel(playerStatsOnProfile.experience_skill_combat), skillToLevel(playerStatsOnProfile.experience_skill_mining),
             skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
@@ -102,4 +106,8 @@ function getTime(date) {
   } else {
     return (date.getUTCHours()-12) + ':' + (date.getUTCMinutes()).toString().padStart(2, '0') + 'pm UTC';
   }
+}
+
+function Sleep(milliseconds) {
+   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
