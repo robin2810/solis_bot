@@ -731,7 +731,9 @@ function setEmbedValues(position, name, out, entry) {
     out.fields.push({"name": name, "value": "```css\n"});
   }
   out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + ('#'+position).padEnd(5, ' ') + Object.keys(entry)[0] + ": " + (entry[Object.keys(entry)[0]].new).toString().replace(".", "․") + " [";
-  if(entry[Object.keys(entry)[0]].new == entry[Object.keys(entry)[0]].old) {
+  if(entry[Object.keys(entry)[0]].new != "no api" && entry[Object.keys(entry)[0]].old == "no api") {
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+-0.0] " + '➡\n';
+  } else if(entry[Object.keys(entry)[0]].new == entry[Object.keys(entry)[0]].old) {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+-0.0] " + '➡\n';
   } else if(entry[Object.keys(entry)[0]].new > entry[Object.keys(entry)[0]].old) {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+" + Math.round(((entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + Number.EPSILON) * 100) / 100 + "] " + '↗\n';
