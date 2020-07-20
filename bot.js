@@ -54,14 +54,16 @@ bot.on('ready', function (evt) {
         } catch(err) {
           console.log(err);
         }
-        bot.editChannelInfo({
-          channelID: '720868375156490290',
-          name: "Guild Members: " + numOfMembers
-        }, function(err, res) {
-          if(err) {
-            console.log(err);
-          }
-        });
+        if(numOfMembers != 0) {          
+          bot.editChannelInfo({
+            channelID: '720868375156490290',
+            name: "Guild Members: " + numOfMembers
+          }, function(err, res) {
+            if(err) {
+              console.log(err);
+            }
+          });
+        }
       });
     }
 });
