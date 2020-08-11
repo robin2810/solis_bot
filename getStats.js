@@ -42,35 +42,75 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
         playerProfiles = responseProfiles.profiles;
 
         var skillAveragesForPlayer = [];
-        for(prof of playerProfiles) {
-          console.log("Requesting stats for profile " + prof.cute_name + "...");
-          var requestProfile = 'https://api.hypixel.net/skyblock/profile?key=' + apiKey + '&profile=' + prof.profile_id;
-          var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
-          await Sleep(1000);
-          var playerStatsOnProfile = responseProfile.profile.members[mem.uuid];
-          var arr = [skillToLevel(playerStatsOnProfile.experience_skill_combat), skillToLevel(playerStatsOnProfile.experience_skill_mining),
-            skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
-            skillToLevel(playerStatsOnProfile.experience_skill_taming), skillToLevel(playerStatsOnProfile.experience_skill_enchanting),
-            skillToLevel(playerStatsOnProfile.experience_skill_fishing), skillToLevel(playerStatsOnProfile.experience_skill_foraging)];
+        var slayerForPlayer = ["", 0, 0];
+        if(playerProfiles != null) {
+          for(prof of playerProfiles) {
+            console.log("Requesting stats for profile " + prof.cute_name + "...");
+            var requestProfile = 'https://api.hypixel.net/skyblock/profile?key=' + apiKey + '&profile=' + prof.profile_id;
+            var responseProfile = JSON.parse(getJSON('GET', requestProfile).getBody());
+            await Sleep(1000);
+            var playerStatsOnProfile = responseProfile.profile.members[mem.uuid];
+
+            //Skill Average
+            var arr = [skillToLevel(playerStatsOnProfile.experience_skill_combat), skillToLevel(playerStatsOnProfile.experience_skill_mining),
+              skillToLevel(playerStatsOnProfile.experience_skill_alchemy), skillToLevel(playerStatsOnProfile.experience_skill_farming),
+              skillToLevel(playerStatsOnProfile.experience_skill_taming), skillToLevel(playerStatsOnProfile.experience_skill_enchanting),
+              skillToLevel(playerStatsOnProfile.experience_skill_fishing), skillToLevel(playerStatsOnProfile.experience_skill_foraging)];
             skillAvg = Math.round((calcAverageOfArray(arr) + Number.EPSILON) * 100) / 100;
             console.log("Recieved Skill Average of " + skillAvg + " for " + playerName + " on profile " + prof.cute_name);
             skillAveragesForPlayer.push(skillAvg);
-          }
-          if(Math.max(...skillAveragesForPlayer) == 0) {
-            statsObj.stats.push({[playerName]: {"skillAvg": "no api"}});
-          } else {
-            statsObj.stats.push({[playerName]: {"skillAvg": Math.max(...skillAveragesForPlayer)}});
+
+            //Slayer
+            console.log(playerStatsOnProfile.slayer_bosses);
+            if(playerStatsOnProfile.slayer_bosses == undefined || (playerStatsOnProfile.slayer_bosses.zombie.xp == undefined & playerStatsOnProfile.slayer_bosses.spider.xp == undefined && playerStatsOnProfile.slayer_bosses.wolf.xp == undefined)) {
+              var slayerLevels = "";
+              var totalSlayerLevel = 0;
+              var slayerXp = 0;
+            } else {
+              var slayerLevels = Object.keys(playerStatsOnProfile.slayer_bosses.zombie.claimed_levels).length + "/" + Object.keys(playerStatsOnProfile.slayer_bosses.spider.claimed_levels).length + "/" + Object.keys(playerStatsOnProfile.slayer_bosses.wolf.claimed_levels).length;
+              var totalSlayerLevel = Object.keys(playerStatsOnProfile.slayer_bosses.zombie.claimed_levels).length + Object.keys(playerStatsOnProfile.slayer_bosses.spider.claimed_levels).length + Object.keys(playerStatsOnProfile.slayer_bosses.wolf.claimed_levels).length;
+              console.log("Recieved Slayer Levels " + slayerLevels + " for " + playerName + " on profile " + prof.cute_name);
+              var slayerXp = playerStatsOnProfile.slayer_bosses.zombie.xp + playerStatsOnProfile.slayer_bosses.spider.xp + playerStatsOnProfile.slayer_bosses.wolf.xp;
+              console.log("Recieved Total Slayer XP of " + slayerXp + " for " + playerName + " on profile " + prof.cute_name);
+              if(slayerXp > slayerForPlayer[2]) {
+                slayerForPlayer = [];
+                slayerForPlayer.push(slayerLevels);
+                slayerForPlayer.push(totalSlayerLevel);
+                slayerForPlayer.push(slayerXp);
+              }
+            }
           }
         }
 
-        fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
+        var playerStats = {"skillAvg":"", "slayerLevels":"", "totalSlayerLevel":"", "slayerXp":""};
+
+        if(Math.max(...skillAveragesForPlayer) == 0) {
+          playerStats.skillAvg = "no api";
+        } else {
+          playerStats.skillAvg = Math.max(...skillAveragesForPlayer);
+        }
+
+        if(slayerForPlayer[0] == "") {
+          playerStats.slayerLevels = "no api";
+          playerStats.totalSlayerLevel = "no api";
+          playerStats.slayerXp = "no api";
+        } else {
+          playerStats.slayerLevels = slayerForPlayer[0];
+          playerStats.totalSlayerLevel = slayerForPlayer[1];
+          playerStats.slayerXp = slayerForPlayer[2];
+        }
+
+        statsObj.stats.push({[playerName]: playerStats});
+      }
+
+      fs.writeFile(__dirname + '/stats_old.json', data, 'utf8', (err) => {
+        if (err) throw err;
+        console.log('The stats have been copied to stats_old!');
+        fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
           if (err) throw err;
-          console.log('The stats have been copied to stats_old!');
-          fs.writeFile(__dirname + '/stats.json', JSON.stringify(statsObj, null, 2), 'utf8', (err) => {
-            if (err) throw err;
-            console.log('The new stats have been saved!');
-          });
+          console.log('The new stats have been saved!');
         });
+      });
     }
   });
 });

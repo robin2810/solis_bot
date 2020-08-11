@@ -8,8 +8,7 @@ var scheduler = require('node-schedule');
 require('.');
 
 var commandsHypixel = /*["initiateping <start|stop>", */["verify <name#tag>", "ping", "memberlist", "inventories <ign>", "leaderboard <stat> [\"change\"]", "trustedvote <name> <interview|promotion> [@]"],
-commandsWynn = ["chiefvote", "ping", "memberlist"],
-leaderboardStats = ["skillAverage"],
+leaderboardStats = ["skillAverage", "slayerXp", "slayerLevels"],
 initiatePing,
 apiKey = '1e77bbdd-5969-4d8a-8a4d-43092b6471f8',
 guildId = '5e58976f8ea8c9832198e154',
@@ -54,7 +53,7 @@ bot.on('ready', function (evt) {
         } catch(err) {
           console.log(err);
         }
-        if(numOfMembers != 0) {          
+        if(numOfMembers != 0) {
           bot.editChannelInfo({
             channelID: '720868375156490290',
             name: "Guild Members: " + numOfMembers
@@ -69,31 +68,29 @@ bot.on('ready', function (evt) {
 });
 
 bot.on('guildMemberAdd', function(member) {
-  if(member.guild_id == '685284276362543115') {
-    var usersArray = Object.values(bot.users);
-    if(usersArray.find(usersArray => usersArray.id === member.id).bot == false) {
-      bot.addToRole({
-        serverID: member.guild_id,
-        userID: member.id,
-        roleID: '685302841224855572' //Normies
-      });
-      bot.addToRole({
-        serverID: member.guild_id,
-        userID: member.id,
-        roleID: '685303000381915175' //Guest
-      });
-    } else {
-      bot.addToRole({
-        serverID: member.guild_id,
-        userID: member.id,
-        roleID: '685635246628012043' //Bot
-      });
-      bot.addToRole({
-        serverID: member.guild_id,
-        userID: member.id,
-        roleID: '685637329725030400' //Robo Normies
-      });
-    }
+  var usersArray = Object.values(bot.users);
+  if(usersArray.find(usersArray => usersArray.id === member.id).bot == false) {
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685302841224855572' //Normies
+    });
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685303000381915175' //Guest
+    });
+  } else {
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685635246628012043' //Bot
+    });
+    bot.addToRole({
+      serverID: member.guild_id,
+      userID: member.id,
+      roleID: '685637329725030400' //Robo Normies
+    });
   }
 });
 
@@ -111,19 +108,26 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
         //args = args.splice(1);
         switch(cmd) {
 
-            // &leaderboard <stat> [685284276362543115]
+            // &leaderboard <stat>
             case 'leaderboard':
               var returnObj = {"date_new":"", "date_old":"", "stats":[]};
               var statsObj, oldStatsObj, stat, textStat, valArray;
               var sortByChange = false;
 
               const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 19.5, 18.5, 17.5, 15, 12.5, 10, 5, 0];
-              const skillAvgValuesbyChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0];
+              const skillAvgValuesByChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0];
+              const slayerXpValues = [3000000, 300000, 220000, 140000, 60000, 45000, 30000, 15000, 11000, 7000, 4000, 2200, 1400, 600, 45, 15, 0];
+              const slayerLevelsValues = [27, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 6, 3, 0];
+
               if(cmd2 == "skillAverage") {
-                stat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
-              }
-              if(args[2] == "change") {
-                sortByChange = true; valArray = skillAvgValuesbyChange;
+                stat = "skillAvg"; dispStat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
+                if(args[2] == "change") {
+                  sortByChange = true; valArray = skillAvgValuesByChange;
+                }
+              } else if(cmd2 == "slayerXp") {
+                stat = "slayerXp"; dispStat = "slayerXp"; textStat = "Total Slayer XP"; valArray = slayerXpValues;
+              } else if(cmd2 == "slayerLevels") {
+                stat = "totalSlayerLevel"; dispStat = "slayerLevels"; textStat = "Total Slayer Levels"; valArray = slayerLevelsValues;
               }
               if(cmd2 == "help" || !leaderboardStats.includes(cmd2)) {
                 bot.sendMessage({
@@ -148,7 +152,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                           var bool = false;
                           for(oldMem of oldStatsObj.stats) {
                             if(Object.keys(oldMem)[0] == Object.keys(mem)[0]) {
-                              returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat]}});
+                                returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat], "dispNew": formatDecimalSeperator(mem[Object.keys(mem)[0]][dispStat])}});
                               break;
                             }
                           }
@@ -188,12 +192,12 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                             var diff = Math.round( ((entry[Object.keys(entry)[0]].new + Number.EPSILON)*100) - ((entry[Object.keys(entry)[0]].old + Number.EPSILON)*100) ) / 100;
                             if(sortByChange) {
                               if(valArray[i-1] >= diff && diff > valArray[i]) {
-                                out = setEmbedValues(pos, valArray[i] + "-" + valArray[i-1], out, entry);
+                                out = setEmbedValues(pos, formatDecimalSeperator(valArray[i]) + "-" + formatDecimalSeperator(valArray[i-1]), out, entry);
                                 pos++;
                               }
                             } else {
                               if(valArray[i-1] >= entry[Object.keys(entry)[0]].new && entry[Object.keys(entry)[0]].new > valArray[i]) {
-                                out = setEmbedValues(pos, valArray[i] + "-" + valArray[i-1], out, entry);
+                                out = setEmbedValues(pos, formatDecimalSeperator(valArray[i]) + "-" + formatDecimalSeperator(valArray[i-1]), out, entry);
                                 pos++;
                               }
                             }
@@ -221,7 +225,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               }
             break;
 
-            // &inventories <Username> [685284276362543115]
+            // &inventories <Username>
             case 'inventories':
               if(args.length > 2) {
                 console.log("false");
@@ -278,118 +282,81 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               });
             break;
 
-            // @deprecated &initiateping <start|stop> [685284276362543115]
-            case 'initiateping':
-              if(serverID == '685284276362543115') {
-                if (cmd2 == 'start') {
-                  initiatePing = setInterval(initiate_ping, 60000, channelID);
-                  bot.sendMessage({
-                      to: channelID,
-                      message: 'Initiate Ping is now started'
-                  });
-                } else if (cmd2 == 'stop') {
-                  clearInterval(initiatePing);
-                  bot.sendMessage({
-                      to: channelID,
-                      message: 'Initiate Ping is now stopped'
-                  });
-                } else {
-                  bot.sendMessage({
-                      to: channelID,
-                      message: 'wrong usage, try: &initiateping start or &initiateping stop'
-                  });
-                }
-              } else {
+            // &verify <discordtag>
+            case 'verify':
+              temp = args;
+              temp.shift();
+              cmd2 = temp.join(' ');
+              console.log(cmd2);
+              if(cmd2 == null) {
                 bot.sendMessage({
                     to: channelID,
-                    message: 'this command is not meant for this server!'
+                    message: 'wrong usage, try: &verify <discordtag#number>'
                 });
-              }
-            break;
-
-            // &verify <discordtag> [685284276362543115]
-            case 'verify':
-              if(serverID == '685284276362543115') {
-                temp = args;
-                temp.shift();
-                cmd2 = temp.join(' ');
-                console.log(cmd2);
-                if(cmd2 == null) {
-                  bot.sendMessage({
-                      to: channelID,
-                      message: 'wrong usage, try: &verify <discordtag#number>'
-                  });
-                } else {
-                  var discordtag = cmd2.split("#");
-                  cmd2 = discordtag[0] + "#" + discordtag[1];
-                  var usersArray = Object.values(bot.users);
-                  if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]) != undefined) {
-                    if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).bot == true) {
-                      bot.sendMessage({
-                        to: channelID,
-                        message: cmd2 + " is a bot!"
-                      });
-                    } else {
-                      var userIdFromDisctag = usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).id;
-                      bot.addToRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685302948095328268' //friend
-                      });
-                      await Sleep(1000);
-                      bot.addToRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685290524747235338' //members
-                      });
-                      await Sleep(1000);
-                      bot.addToRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685290264843386969' //member
-                      });
-                      await Sleep(1000);
-                      bot.addToRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685303138986885203' //ranks
-                      });
-                      await Sleep(1000);
-                      bot.addToRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685303866392182785' //silver
-                      });
-                      await Sleep(1000);
-                      bot.removeFromRole({
-                        serverID: '685284276362543115',
-                        userID: userIdFromDisctag,
-                        roleID: '685303000381915175' //guest
-                      });
-                      await Sleep(1000);
-                      bot.sendMessage({
-                        to: channelID,
-                        message: cmd2 + " verified!"
-                      });
-                    }
-                  } else {
+              } else {
+                var discordtag = cmd2.split("#");
+                cmd2 = discordtag[0] + "#" + discordtag[1];
+                var usersArray = Object.values(bot.users);
+                if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]) != undefined) {
+                  if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).bot == true) {
                     bot.sendMessage({
                       to: channelID,
-                      message: "User " + cmd2 + " not found!"
+                      message: cmd2 + " is a bot!"
+                    });
+                  } else {
+                    var userIdFromDisctag = usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).id;
+                    bot.addToRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685302948095328268' //friend
+                    });
+                    await Sleep(1000);
+                    bot.addToRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685290524747235338' //members
+                    });
+                    await Sleep(1000);
+                    bot.addToRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685290264843386969' //member
+                    });
+                    await Sleep(1000);
+                    bot.addToRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685303138986885203' //ranks
+                    });
+                    await Sleep(1000);
+                    bot.addToRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685303866392182785' //silver
+                    });
+                    await Sleep(1000);
+                    bot.removeFromRole({
+                      serverID: '685284276362543115',
+                      userID: userIdFromDisctag,
+                      roleID: '685303000381915175' //guest
+                    });
+                    await Sleep(1000);
+                    bot.sendMessage({
+                      to: channelID,
+                      message: cmd2 + " verified!"
                     });
                   }
-                }
-              } else {
-                bot.sendMessage({
+                } else {
+                  bot.sendMessage({
                     to: channelID,
-                    message: 'this command is not meant for this server!'
-                });
+                    message: "User " + cmd2 + " not found!"
+                  });
+                }
               }
             break;
 
-            // &trustedvote <name> [685284276362543115]
+            // &trustedvote <name>
             case 'trustedvote':
-            if(serverID == '685284276362543115') {
               var msg = "";
               var rightUsage = true;
 
@@ -431,65 +398,14 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                   });
                 }
               });
-            } else {
-              bot.sendMessage({
-                  to: channelID,
-                  message: 'this command is not meant for this server!'
-              });
-            }
-            break;
-
-            // &chiefvote <votemessage> [627293915501953024]
-            case 'chiefvote':
-            if(serverID == '627293915501953024') {
-              bot.sendMessage({
-                  to: channelID,
-                  message: '<@&627583725302972427>\n' + args.join(" ").substring(10)
-              }, async function(err, res) {
-                  bot.deleteMessage({
-                    channelID: channelID,
-                    messageID: evt.d.id,
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '🙂'
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '😐'
-                  });
-                  await Sleep(2500);
-                  bot.addReaction({
-                    channelID: channelID,
-                    messageID: res.id,
-                    reaction: '🙁'
-                  });
-              });
-            } else {
-              bot.sendMessage({
-                  to: channelID,
-                  message: 'this command is not meant for this server!'
-              });
-            }
             break;
 
             // &help
             case 'help':
-              if(serverID == '627293915501953024') { //WYNN
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'you can use the following commands: &' + commandsWynn.join(', &')
-                });
-              } else if(serverID == '685284276362543115') { //HYPIXEL
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'you can use the following commands: &' + commandsHypixel.join(', &')
-                });
-              }
+              bot.sendMessage({
+                  to: channelID,
+                  message: 'you can use the following commands: &' + commandsHypixel.join(', &')
+              });
             break;
 
             case 'ping':
@@ -501,17 +417,10 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
             //default
             default:
-              if(serverID == '627293915501953024') { //WYNN
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'unknown command, try: &' + commandsWynn.join(', &')
-                });
-              } else if(serverID == '685284276362543115') { //HYPIXEL
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'unknown command, try: &' + commandsHypixel.join(', &')
-                });
-              }
+              bot.sendMessage({
+                  to: channelID,
+                  message: 'unknown command, try: &' + commandsHypixel.join(', &')
+              });
             break;
          }
      }
@@ -545,105 +454,6 @@ function getInventory(uName) {
 
 }
 
-/**
-* @deprecated
-*/
-function initiate_ping(channelID) {
-  var currentDate = Date.now();
-  var urlOuter = 'https://api.hypixel.net/guild?key=' + apiKey + '&id=' + guildId;
-  try {
-    var responseOuter = JSON.parse(getJSON('GET', urlOuter).getBody());
-    var members = responseOuter.guild.members;
-    var responded_username;
-    var out = '',
-    out2 = '',
-    dont_return_out = false;
-    var previousOut;
-    var messageID = fs.readFileSync(__dirname + '/messageID.txt', 'utf8');
-
-    if(messageID != "") {
-      dont_return_out = true;
-      bot.getMessage({
-        channelID: channelID,
-        messageID: messageID
-      }, function(err, res) {
-        var message = res.content.split('\n');
-        var names = [];
-        for(i = 0; i < message.length; i = i+2) {
-          var temp = message[i].split(" ");
-          names.push(temp[0]);
-        }
-        for(i = 0; i < members.length; i++) {
-          if(members[i].rank == 'Initiate') {
-            var playerUuid = members[i].uuid;
-            var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
-            var response = JSON.parse(getJSON('GET', url).getBody());
-            responded_username = response.player.displayname;
-            if((currentDate - members[i].joined) > (ms_to_day*7)) {
-              if(dont_return_out) {
-                dont_return_out = names.includes(responded_username);
-              }
-              out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-              out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-            } else {
-              out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-            }
-          }
-        }
-        if(Math.round(Date.now()/1000) % Math.round(ms_to_day/1000) == 0) {
-          console.log(Date(Date.now().toString()));
-          console.log(out2);
-        }
-        if(!dont_return_out) {
-          bot.sendMessage({
-            to: channelID,
-            message: out
-          }, function(err, res) {
-            if(err == "") {
-              console.log(err);
-            } else {
-              fs.writeFileSync(__dirname + '/messageID.txt', res.id);
-            }
-          });
-        }
-      });
-    } else {
-      for(i = 0; i < members.length; i++) {
-        if(members[i].rank == 'Initiate') {
-          var playerUuid = members[i].uuid;
-          var url = 'https://api.hypixel.net/player?key=' + apiKey + '&uuid=' + playerUuid;
-          var response = JSON.parse(getJSON('GET', url).getBody());
-          responded_username = response.player.displayname;
-          if((currentDate - members[i].joined) > (ms_to_day*7)) {
-            out = out + responded_username + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-            out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-          } else {
-            out2 = out2 + members[i].uuid + ' joined ' + ((currentDate - members[i].joined)/ms_to_day).toFixed(2) + ' days ago.\n=====\n';
-          }
-        }
-      }
-      if(Math.round(Date.now()/1000) % Math.round(ms_to_day/1000) == 0) {
-        console.log(Date(Date.now().toString()));
-        console.log(out2);
-      }
-      if(!dont_return_out) {
-        bot.sendMessage({
-          to: channelID,
-          message: out
-        }, function(err, res) {
-          if(err == "") {
-            console.log(err);
-          } else {
-            fs.writeFileSync(__dirname + '/messageID.txt', res.id);
-          }
-        });
-      }
-    }
-  } catch(err) {
-    console.log(err);
-  }
-}
-
 function Sleep(milliseconds) {
    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
@@ -666,7 +476,7 @@ function setEmbedValues(position, name, out, entry) {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
     out.fields.push({"name": name, "value": "```css\n"});
   }
-  out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + ('#'+position).padEnd(5, ' ') + Object.keys(entry)[0] + ": " + (entry[Object.keys(entry)[0]].new).toString().replace(".", "․") + " [";
+  out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + ('#'+position).padEnd(5, ' ') + Object.keys(entry)[0] + ": " + (entry[Object.keys(entry)[0]].dispNew).toString().replace(".", "․") + " [";
   if(entry[Object.keys(entry)[0]].new != "no api" && entry[Object.keys(entry)[0]].old == "no api") {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+-0.0] " + '➡\n';
   } else if(entry[Object.keys(entry)[0]].new == entry[Object.keys(entry)[0]].old) {
@@ -674,10 +484,14 @@ function setEmbedValues(position, name, out, entry) {
   } else if(entry[Object.keys(entry)[0]].new > entry[Object.keys(entry)[0]].old) {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "+" + Math.round(((entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + Number.EPSILON) * 100) / 100 + "] " + '↗\n';
   } else if(entry[Object.keys(entry)[0]].new < entry[Object.keys(entry)[0]].old) {
-    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + (entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + "] " + '↘\n';
+    out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + Math.round(((entry[Object.keys(entry)[0]].new - entry[Object.keys(entry)[0]].old) + Number.EPSILON) * 100) / 100 + "] " + '↘\n';
   } else {
     out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "\n";
   }
 
   return out;
+}
+
+function formatDecimalSeperator(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
