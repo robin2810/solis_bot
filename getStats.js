@@ -41,7 +41,7 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
         await Sleep(1000);
         playerProfiles = responseProfiles.profiles;
 
-        var skillAveragesForPlayer = [];
+        var skillAveragesForPlayer = [0];
         var slayerForPlayer = ["", 0, 0];
         if(playerProfiles != null) {
           for(prof of playerProfiles) {
@@ -131,7 +131,11 @@ function skillToLevel(skillXP) {
       if(skillXP < levelXP[i]) break;
       i++;
     }
-    return i-1 + ((skillXP-levelXP[i-1])/(levelXP[i]-levelXP[i-1]));
+    if(i > 50) {
+      return 50;
+    } else {
+      return i-1 + ((skillXP-levelXP[i-1])/(levelXP[i]-levelXP[i-1]));
+    }
   }
 }
 

@@ -117,17 +117,25 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 19.5, 18.5, 17.5, 15, 12.5, 10, 5, 0];
               const skillAvgValuesByChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0];
               const slayerXpValues = [3000000, 300000, 220000, 140000, 60000, 45000, 30000, 15000, 11000, 7000, 4000, 2200, 1400, 600, 45, 15, 0];
+              const slayerXpValuesByChange = [3000000, 300000, 100000, 50000, 10000, 5000, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 0];
               const slayerLevelsValues = [27, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 6, 3, 0];
+              const slayerLevelsValuesByChange = [27, 21, 18, 15, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 
               if(cmd2 == "skillAverage") {
-                stat = "skillAvg"; dispStat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues;
+                stat = "skillAvg"; dispStat = "skillAvg"; textStat = "Skill Average"; valArray = skillAvgValues; granularity = 0.01;
                 if(args[2] == "change") {
-                  sortByChange = true; valArray = skillAvgValuesByChange;
+                  sortByChange = true; valArray = skillAvgValuesByChange; granularity = 0.01;
                 }
               } else if(cmd2 == "slayerXp") {
-                stat = "slayerXp"; dispStat = "slayerXp"; textStat = "Total Slayer XP"; valArray = slayerXpValues;
+                stat = "slayerXp"; dispStat = "slayerXp"; textStat = "Total Slayer XP"; valArray = slayerXpValues; granularity = 1;
+                if(args[2] == "change") {
+                  sortByChange = true; valArray = slayerXpValuesByChange; granularity = 1;
+                }
               } else if(cmd2 == "slayerLevels") {
-                stat = "totalSlayerLevel"; dispStat = "slayerLevels"; textStat = "Total Slayer Levels"; valArray = slayerLevelsValues;
+                stat = "totalSlayerLevel"; dispStat = "slayerLevels"; textStat = "Total Slayer Levels"; valArray = slayerLevelsValues; granularity = 1;
+                if(args[2] == "change") {
+                  sortByChange = true; valArray = slayerLevelsValuesByChange; granularity = 1;
+                }
               }
               if(cmd2 == "help" || !leaderboardStats.includes(cmd2)) {
                 bot.sendMessage({
@@ -152,7 +160,11 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                           var bool = false;
                           for(oldMem of oldStatsObj.stats) {
                             if(Object.keys(oldMem)[0] == Object.keys(mem)[0]) {
+                              if(oldMem[Object.keys(oldMem)[0]][stat] == "no api" && mem[Object.keys(mem)[0]][stat] != "no api") {
+                                returnObj.stats.push({[Object.keys(mem)[0]]: {"old": mem[Object.keys(mem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat], "dispNew": formatDecimalSeperator(mem[Object.keys(mem)[0]][dispStat])}});
+                              } else {
                                 returnObj.stats.push({[Object.keys(mem)[0]]: {"old": oldMem[Object.keys(oldMem)[0]][stat], "new": mem[Object.keys(mem)[0]][stat], "dispNew": formatDecimalSeperator(mem[Object.keys(mem)[0]][dispStat])}});
+                              }
                               break;
                             }
                           }
@@ -192,12 +204,12 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                             var diff = Math.round( ((entry[Object.keys(entry)[0]].new + Number.EPSILON)*100) - ((entry[Object.keys(entry)[0]].old + Number.EPSILON)*100) ) / 100;
                             if(sortByChange) {
                               if(valArray[i-1] >= diff && diff > valArray[i]) {
-                                out = setEmbedValues(pos, formatDecimalSeperator(valArray[i]) + "-" + formatDecimalSeperator(valArray[i-1]), out, entry);
+                                out = setEmbedValues(pos, formatDecimalSeperator(Math.round(((valArray[i]+granularity) + Number.EPSILON) * 100) / 100) + "-" + formatDecimalSeperator(Math.round((valArray[i-1] + Number.EPSILON) * 100) / 100), out, entry);
                                 pos++;
                               }
                             } else {
                               if(valArray[i-1] >= entry[Object.keys(entry)[0]].new && entry[Object.keys(entry)[0]].new > valArray[i]) {
-                                out = setEmbedValues(pos, formatDecimalSeperator(valArray[i]) + "-" + formatDecimalSeperator(valArray[i-1]), out, entry);
+                                out = setEmbedValues(pos, formatDecimalSeperator(Math.round(((valArray[i]+granularity) + Number.EPSILON) * 100) / 100) + "-" + formatDecimalSeperator(Math.round((valArray[i-1] + Number.EPSILON) * 100) / 100), out, entry);
                                 pos++;
                               }
                             }
