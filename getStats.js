@@ -61,7 +61,6 @@ var jobDailyStatSave = scheduler.scheduleJob('0 0 7/1 * * *', function() {
             skillAveragesForPlayer.push(skillAvg);
 
             //Slayer
-            console.log(playerStatsOnProfile.slayer_bosses);
             if(playerStatsOnProfile.slayer_bosses == undefined || (playerStatsOnProfile.slayer_bosses.zombie.xp == undefined & playerStatsOnProfile.slayer_bosses.spider.xp == undefined && playerStatsOnProfile.slayer_bosses.wolf.xp == undefined)) {
               var slayerLevels = "";
               var totalSlayerLevel = 0;
