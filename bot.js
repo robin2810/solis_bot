@@ -218,18 +218,25 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                             //out = setEmbedValues(pos, "0.0", out, entry);
                             pos++;
                           }
-                          if(entry[Object.keys(entry)[0]].new == "no api") {
+                          if(entry[Object.keys(entry)[0]].new == "no api" && !(sortByChange)) {
                            out = setEmbedValues(pos, "no api", out, entry);
                            pos++;
                           }
                         }
-                        out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
+                        if(out.fields.length == 0) {
+                          bot.sendMessage({
+                            to: channelID,
+                            message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*" + "\n\n ***---There is no Info available for your Request---***"
+                          });
+                        } else {
+                          out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
 
-                        bot.sendMessage({
-                          to: channelID,
-                          message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*",
-                          embed: out
-                        });
+                          bot.sendMessage({
+                            to: channelID,
+                            message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*",
+                            embed: out
+                          });
+                        }
                       }
                     });
                   }
