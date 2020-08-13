@@ -226,7 +226,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
                         if(out.fields.length == 0) {
                           bot.sendMessage({
                             to: channelID,
-                            message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*" + "\n\n ***---There is no Info available for your Request---***"
+                            message: "***" + textStat + "*** *" + returnObj.date_old + " -> " + returnObj.date_new + "*" + "\n\n ***---There is no Info available for your request---***"
                           });
                         } else {
                           out.fields[out.fields.length-1].value = out.fields[out.fields.length-1].value + "```";
