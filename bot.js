@@ -111,8 +111,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
             message: "https://forms.gle/4dNx1kgxzrYtqjxe7",
             embed: out
           });
-          logger.info('--- Forms-Link requested by ' + evt.d.author.username + '#' + evt.d.author.discriminator);
-          console.log(evt);
+          console.log('--- Forms-Link requested by ' + evt.d.author.username + '#' + evt.d.author.discriminator);
         break;
       }
     }
