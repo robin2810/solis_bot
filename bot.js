@@ -98,6 +98,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
 
     var serverID = evt.d.guild_id;
 
+<<<<<<< HEAD
     if (message.substring(0, 1) == '!') {
       var args = message.substring(1).split(' ');
       var cmd = args[0];
@@ -117,6 +118,8 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
       }
     }
 
+=======
+>>>>>>> parent of 552efdf... Update bot.js
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (message.substring(0, 1) == '&') {
