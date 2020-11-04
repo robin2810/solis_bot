@@ -132,7 +132,7 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               var statsObj, oldStatsObj, stat, textStat, valArray;
               var sortByChange = false;
 
-              const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 25, 22.5, 20, 19.5, 18.5, 17.5, 15, 12.5, 10, 5, 0];
+              const skillAvgValues = [50, 45, 40, 35, 30, 27.5, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 15, 12.5, 10, 5, 0];
               const skillAvgValuesByChange = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0];
               const slayerXpValues = [3000000, 300000, 220000, 140000, 60000, 45000, 30000, 15000, 11000, 7000, 4000, 2200, 1400, 600, 45, 15, 0];
               const slayerXpValuesByChange = [3000000, 300000, 100000, 50000, 10000, 5000, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 0];
