@@ -324,70 +324,62 @@ bot.on('message', async function (user, userID, channelID, message, evt) {
               temp = args;
               temp.shift();
               cmd2 = temp.join(' ');
-              console.log(cmd2);
-              if(cmd2 == null) {
+              if(evt.d.mentions == undefined) {
                 bot.sendMessage({
                     to: channelID,
-                    message: 'wrong usage, try: &verify <discordtag#number>'
+                    message: 'wrong usage, try: &verify @<user>'
                 });
               } else {
-                var discordtag = cmd2.split("#");
-                cmd2 = discordtag[0] + "#" + discordtag[1];
-                var usersArray = Object.values(bot.users);
-                if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]) != undefined) {
-                  if(usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).bot == true) {
+                for(var mention of evt.d.mentions) {
+                  console.log(mention);
+                  if(mention.bot == true) {
                     bot.sendMessage({
                       to: channelID,
-                      message: cmd2 + " is a bot!"
+                      message: mention.username + '#' + mention.discriminator + " is a bot!"
                     });
                   } else {
-                    var userIdFromDisctag = usersArray.find(usersArray => usersArray.username === discordtag[0] && usersArray.discriminator == discordtag[1]).id;
+                    var userIdFromMention = mention.id;
                     bot.addToRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685302948095328268' //friend
                     });
                     await Sleep(1000);
                     bot.addToRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685290524747235338' //members
                     });
                     await Sleep(1000);
                     bot.addToRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685290264843386969' //member
                     });
                     await Sleep(1000);
                     bot.addToRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685303138986885203' //ranks
                     });
                     await Sleep(1000);
                     bot.addToRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685303866392182785' //silver
                     });
                     await Sleep(1000);
                     bot.removeFromRole({
                       serverID: '685284276362543115',
-                      userID: userIdFromDisctag,
+                      userID: userIdFromMention,
                       roleID: '685303000381915175' //guest
                     });
                     await Sleep(1000);
                     bot.sendMessage({
                       to: channelID,
-                      message: cmd2 + " verified!"
+                      message: mention.username + '#' + mention.discriminator + " verified!"
                     });
                   }
-                } else {
-                  bot.sendMessage({
-                    to: channelID,
-                    message: "User " + cmd2 + " not found!"
-                  });
                 }
               }
             break;
